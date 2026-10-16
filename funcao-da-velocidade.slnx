@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="funcao-da-velocidade/funcao-da-velocidade.vcxproj" />
+</Solution>
