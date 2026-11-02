@@ -68,7 +68,7 @@ int main(void)
     }
     al_set_window_title(display, "Meu Jogo");
 
-    ALLEGRO_BITMAP* capa = al_load_bitmap("capa.png");
+    ALLEGRO_BITMAP* capa = al_load_bitmap("images/capa.png");
     if (!capa) {
         fprintf(stderr, "Falha ao carregar capa.png (confira se o arquivo esta na pasta do executavel).\n");
         al_destroy_display(display);
