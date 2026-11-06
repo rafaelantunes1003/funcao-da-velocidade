@@ -21,6 +21,9 @@
     <ClCompile Include="InterpretaFuncao\expressao.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+    <ClCompile Include="movimento_circulo_c.c">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

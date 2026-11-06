@@ -196,7 +196,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="InterpretaFuncao\expressao.c" />
-    <ClCompile Include="teste.c" />
+    <ClCompile Include="movimento_circulo_c.c" />
+    <ClCompile Include="teste.c">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
