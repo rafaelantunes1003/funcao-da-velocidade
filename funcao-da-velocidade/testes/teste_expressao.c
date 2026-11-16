@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "expressao.h"
+#include "../src/expressao.h"
 
 #define PI 3.14159265358979323846
 

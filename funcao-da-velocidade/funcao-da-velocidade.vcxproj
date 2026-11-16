@@ -195,9 +195,13 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="InterpretaFuncao\expressao.c" />
-    <ClCompile Include="movimento_circulo_c.c" />
-    <ClCompile Include="teste.c">
+    <ClCompile Include="src\campo_texto.c" />
+    <ClCompile Include="src\coordenadas.c" />
+    <ClCompile Include="src\desenho.c" />
+    <ClCompile Include="src\expressao.c" />
+    <ClCompile Include="src\jogo.c" />
+    <ClCompile Include="src\main.c" />
+    <ClCompile Include="testes\teste_expressao.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
@@ -205,7 +209,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InterpretaFuncao\expressao.h" />
+    <ClInclude Include="src\campo_texto.h" />
+    <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\coordenadas.h" />
+    <ClInclude Include="src\desenho.h" />
+    <ClInclude Include="src\expressao.h" />
+    <ClInclude Include="src\jogo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
