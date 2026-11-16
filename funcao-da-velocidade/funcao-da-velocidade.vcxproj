@@ -201,6 +201,7 @@
     <ClCompile Include="src\expressao.c" />
     <ClCompile Include="src\jogo.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\menu.c" />
     <ClCompile Include="testes\teste_expressao.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -209,6 +210,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="menu.h" />
     <ClInclude Include="src\campo_texto.h" />
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\coordenadas.h" />
