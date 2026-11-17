@@ -5,6 +5,7 @@
 #include "config.h"
 #include "coordenadas.h"
 #include "campo_texto.h"
+#include "obstaculos.h"
 
 static void desenhar_grade(ALLEGRO_FONT *fonte)
 {
@@ -12,19 +13,17 @@ static void desenhar_grade(ALLEGRO_FONT *fonte)
     ALLEGRO_COLOR eixo = al_map_rgb(140, 140, 140);
     ALLEGRO_COLOR numero = al_map_rgb(120, 120, 120);
     int altura_fonte = al_get_font_line_height(fonte);
-
-    for (int i = (int)X_MIN; i <= (int)X_MAX; i++){
+    for (int i = (int)X_MIN; i <= (int)X_MAX; i++) {
         float px = tela_x(i);
         al_draw_line(px, PISTA_Y1, px, PISTA_Y2, grade, 1);
         al_draw_textf(fonte, numero, px, PISTA_Y2 + 6, ALLEGRO_ALIGN_CENTRE, "%d", i);
     }
-
-    for (int i = (int)Y_MIN; i <= (int)Y_MAX; i++){
+    for (int i = (int)Y_MIN; i <= (int)Y_MAX; i++) {
         float py = tela_y(i);
         al_draw_line(PISTA_X1, py, PISTA_X2, py, grade, 1);
-        al_draw_textf(fonte, numero, PISTA_X1 - 8, py - altura_fonte / 2.0f, ALLEGRO_ALIGN_RIGHT, "%d", i);
+        al_draw_textf(fonte, numero, PISTA_X1 - 8, py - altura_fonte / 2.0f,
+                      ALLEGRO_ALIGN_RIGHT, "%d", i);
     }
-
     al_draw_line(PISTA_X1, tela_y(0), PISTA_X2, tela_y(0), eixo, 2);
     al_draw_line(tela_x(0), PISTA_Y1, tela_x(0), PISTA_Y2, eixo, 2);
     al_draw_rectangle(PISTA_X1, PISTA_Y1, PISTA_X2, PISTA_Y2, eixo, 2);
@@ -35,42 +34,28 @@ static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor)
     double margem = Y_MAX - Y_MIN;
     float altura_pista = PISTA_Y2 - PISTA_Y1;
     bool anterior_ok = false;
-    float px_anterior = 0;
-    float py_anterior = 0;
-
-    al_set_clipping_rectangle(PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1 + 1, PISTA_Y2 - PISTA_Y1 + 1);
-
-    for (int px = PISTA_X1; px <= PISTA_X2; px++){
+    float px_anterior = 0, py_anterior = 0;
+    al_set_clipping_rectangle(PISTA_X1, PISTA_Y1,
+        PISTA_X2 - PISTA_X1 + 1, PISTA_Y2 - PISTA_Y1 + 1);
+    for (int px = PISTA_X1; px <= PISTA_X2; px++) {
         double x = X_MIN + (px - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
         double y = expressao_avaliar(funcao, x);
         bool ok = isfinite(y) && y > Y_MIN - margem && y < Y_MAX + margem;
         float py = ok ? tela_y(y) : 0;
-
-        if (ok && anterior_ok && fabsf(py - py_anterior) < altura_pista){
+        if (ok && anterior_ok && fabsf(py - py_anterior) < altura_pista)
             al_draw_line(px_anterior, py_anterior, (float)px, py, cor, 3);
-        }
-
         anterior_ok = ok;
         px_anterior = (float)px;
         py_anterior = py;
     }
-
     al_reset_clipping_rectangle();
 }
 
 static void desenhar_carro(const Jogo *jogo, ALLEGRO_BITMAP *carro)
 {
-    al_draw_scaled_rotated_bitmap(
-        carro,
-        CARRO_CENTRO_X,
-        CARRO_CENTRO_Y,
-        tela_x(jogo->x),
-        tela_y(jogo->y),
-        CARRO_ESCALA,
-        CARRO_ESCALA,
-        jogo->angulo,
-        0
-    );
+    al_draw_scaled_rotated_bitmap(carro, CARRO_CENTRO_X, CARRO_CENTRO_Y,
+        tela_x(jogo->x), tela_y(jogo->y), CARRO_ESCALA, CARRO_ESCALA,
+        jogo->angulo, 0);
 }
 
 static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
@@ -79,32 +64,38 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
     ALLEGRO_COLOR cinza = al_map_rgb(150, 150, 150);
     ALLEGRO_COLOR verde = al_map_rgb(60, 220, 60);
     ALLEGRO_COLOR vermelho = al_map_rgb(255, 80, 80);
-
     int x = CAMPO_X1;
     int y = PISTA_Y2 + al_get_font_line_height(fonte) + 14;
 
-    if (!jogo->funcao && jogo->erro[0] != '\0'){
+    if (!jogo->funcao && jogo->erro[0] != '\0') {
         al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT, "Erro: %s", jogo->erro);
-    }
-    else if (jogo->estado == PARADO){
+    } else if (jogo->estado == PARADO) {
         al_draw_text(fonte, cinza, x, y, ALLEGRO_ALIGN_LEFT,
             "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1");
-    }
-    else if (jogo->estado == ANDANDO){
+    } else if (jogo->estado == ANDANDO) {
         al_draw_textf(fonte, branco, x, y, ALLEGRO_ALIGN_LEFT,
             "x = %.2f    f(x) = %.2f", jogo->x, jogo->y);
-    }
-    else if (jogo->estado == CHEGOU){
+    } else if (jogo->estado == CHEGOU) {
         al_draw_textf(fonte, verde, x, y, ALLEGRO_ALIGN_LEFT,
             "Chegou! f(%.0f) = %.2f   (ENTER corre de novo)", jogo->x, jogo->y);
-    }
-    else if (!isfinite(jogo->y_saida)){
+    } else if (jogo->estado == COLIDIU) {
+        const char *nome = "obstaculo";
+        if (jogo->obstaculo_colisao) {
+            switch (jogo->obstaculo_colisao->tipo) {
+            case OBSTACULO_PEDRA: nome = "pedra"; break;
+            case OBSTACULO_CONE: nome = "cone"; break;
+            case OBSTACULO_BURACO: nome = "buraco"; break;
+            }
+        }
+        al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT,
+            "Colisao com %s em x = %.2f! (ENTER tenta novamente)", nome, jogo->x);
+    } else if (!isfinite(jogo->y_saida)) {
         al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT,
             "f(x) nao existe em x = %.2f   (ENTER corre de novo)", jogo->x_saida);
-    }
-    else {
+    } else {
         al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT,
-            "Saiu da pista em x = %.2f: f(x) = %.2f   (ENTER corre de novo)", jogo->x_saida, jogo->y_saida);
+            "Saiu da pista em x = %.2f: f(x) = %.2f   (ENTER corre de novo)",
+            jogo->x_saida, jogo->y_saida);
     }
 }
 
@@ -112,16 +103,11 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
                    ALLEGRO_BITMAP *carro, ALLEGRO_FONT *fonte)
 {
     al_clear_to_color(al_map_rgb(0, 0, 0));
-
     desenhar_grade(fonte);
-
-    if (jogo->funcao){
-        desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
-    }
-
+    if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
+    obstaculos_desenhar();
     desenhar_carro(jogo, carro);
     desenhar_mensagem(jogo, fonte);
     campo_desenhar(texto, fonte);
-
     al_flip_display();
 }
