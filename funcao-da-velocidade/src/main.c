@@ -89,7 +89,7 @@ int main(void)
     }
 
     if (!obstaculos_inicializar()) {
-        fprintf(stderr, "Falha ao carregar as imagens dos obstaculos (confira a pasta images).\\n");
+        fprintf(stderr, "Falha ao carregar as imagens dos obstaculos (confira a pasta images).\n");
         al_destroy_bitmap(carro);
         menu_destruir(&menu);
         al_destroy_display(janela);
