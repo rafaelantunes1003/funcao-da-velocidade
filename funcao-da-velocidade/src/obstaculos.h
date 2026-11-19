@@ -21,13 +21,17 @@ typedef struct {
  * As dimensões de colisão são definidas em pixels. */
 const Obstaculo *obstaculos_obter(int *quantidade);
 
+/* Carrega e libera as imagens dos obstáculos. */
+bool obstaculos_inicializar(void);
+void obstaculos_finalizar(void);
+
 /* Verifica a colisão do carro ao percorrer o trecho entre dois pontos. */
 const Obstaculo *obstaculos_verificar_colisao(double x_anterior,
                                                double y_anterior,
                                                double x_atual,
                                                double y_atual);
 
-/* Desenha as formas provisórias; podem ser substituídas por imagens depois. */
+/* Desenha as imagens dos obstáculos. */
 void obstaculos_desenhar(void);
 
 #endif
