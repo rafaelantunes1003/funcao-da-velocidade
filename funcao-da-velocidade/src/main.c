@@ -90,8 +90,7 @@ int main(void)
 
     if (!obstaculos_inicializar()) {
         fprintf(stderr, "Falha ao carregar as imagens dos obstaculos (confira a pasta images).\\n");
-        obstaculos_finalizar();
-    al_destroy_bitmap(carro);
+        al_destroy_bitmap(carro);
         menu_destruir(&menu);
         al_destroy_display(janela);
         return -1;
@@ -164,6 +163,7 @@ int main(void)
     jogo_finalizar(&jogo);
     al_ustr_free(texto);
     al_destroy_font(fonte);
+    obstaculos_finalizar();
     al_destroy_bitmap(carro);
     menu_destruir(&menu);
     al_destroy_timer(timer);
