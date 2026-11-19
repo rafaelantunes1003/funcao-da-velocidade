@@ -11,6 +11,7 @@
 #include "jogo.h"
 #include "desenho.h"
 #include "campo_texto.h"
+#include "obstaculos.h"
 
 static bool iniciar_allegro(void)
 {
@@ -82,6 +83,15 @@ int main(void)
     ALLEGRO_BITMAP* carro = al_load_bitmap(CARRO_IMAGEM);
     if (!carro) {
         fprintf(stderr, "Falha ao carregar %s (confira se a pasta images esta junto do executavel).\n", CARRO_IMAGEM);
+        menu_destruir(&menu);
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    if (!obstaculos_inicializar()) {
+        fprintf(stderr, "Falha ao carregar as imagens dos obstaculos (confira a pasta images).\\n");
+        obstaculos_finalizar();
+    al_destroy_bitmap(carro);
         menu_destruir(&menu);
         al_destroy_display(janela);
         return -1;
