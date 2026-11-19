@@ -1,21 +1,50 @@
 #include <math.h>
 #include <stddef.h>
-#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 #include "obstaculos.h"
 #include "coordenadas.h"
 #include "config.h"
 
-/* Posições de exemplo em coordenadas do gráfico. Ajuste x/y para reposicionar. */
+/* Posições de exemplo em coordenadas do gráfico.
+ * As dimensões também definem a área de colisão. */
 static const Obstaculo obstaculos[] = {
-    { OBSTACULO_PEDRA, 2.2,  1.5, 17.0f, 13.0f },
-    { OBSTACULO_CONE,  5.0, -1.8, 11.0f, 19.0f },
+    { OBSTACULO_PEDRA,  2.2,  1.5, 17.0f, 13.0f },
+    { OBSTACULO_CONE,   5.0, -1.8, 11.0f, 19.0f },
     { OBSTACULO_BURACO, 7.8,  2.4, 25.0f, 11.0f }
 };
+
+static ALLEGRO_BITMAP *imagem_pedra = NULL;
+static ALLEGRO_BITMAP *imagem_cone = NULL;
+static ALLEGRO_BITMAP *imagem_buraco = NULL;
 
 const Obstaculo *obstaculos_obter(int *quantidade)
 {
     if (quantidade) *quantidade = (int)(sizeof(obstaculos) / sizeof(obstaculos[0]));
     return obstaculos;
+}
+
+bool obstaculos_inicializar(void)
+{
+    imagem_pedra = al_load_bitmap("images/pedra.png");
+    imagem_cone = al_load_bitmap("images/cone.png");
+    imagem_buraco = al_load_bitmap("images/buraco.png");
+
+    if (!imagem_pedra || !imagem_cone || !imagem_buraco) {
+        obstaculos_finalizar();
+        return false;
+    }
+    return true;
+}
+
+void obstaculos_finalizar(void)
+{
+    if (imagem_pedra) al_destroy_bitmap(imagem_pedra);
+    if (imagem_cone) al_destroy_bitmap(imagem_cone);
+    if (imagem_buraco) al_destroy_bitmap(imagem_buraco);
+
+    imagem_pedra = NULL;
+    imagem_cone = NULL;
+    imagem_buraco = NULL;
 }
 
 /* Interseção segmento-retângulo: evita que o carro atravesse objetos entre frames. */
@@ -67,33 +96,41 @@ const Obstaculo *obstaculos_verificar_colisao(double x_anterior, double y_anteri
     return NULL;
 }
 
+/* Mantém a proporção original e encaixa a imagem na área definida para o obstáculo. */
+static void desenhar_imagem_obstaculo(ALLEGRO_BITMAP *imagem,
+                                      const Obstaculo *obstaculo)
+{
+    if (!imagem) return;
+
+    float largura_original = (float)al_get_bitmap_width(imagem);
+    float altura_original = (float)al_get_bitmap_height(imagem);
+    float largura_limite = obstaculo->meia_largura_px * 2.0f;
+    float altura_limite = obstaculo->meia_altura_px * 2.0f;
+    float escala_x = largura_limite / largura_original;
+    float escala_y = altura_limite / altura_original;
+    float escala = escala_x < escala_y ? escala_x : escala_y;
+    float largura = largura_original * escala;
+    float altura = altura_original * escala;
+    float x = tela_x(obstaculo->x);
+    float y = tela_y(obstaculo->y);
+
+    al_draw_scaled_bitmap(imagem, 0, 0, largura_original, altura_original,
+        x - largura / 2.0f, y - altura / 2.0f, largura, altura, 0);
+}
+
 void obstaculos_desenhar(void)
 {
     for (size_t i = 0; i < sizeof(obstaculos) / sizeof(obstaculos[0]); i++) {
         const Obstaculo *o = &obstaculos[i];
-        float x = tela_x(o->x), y = tela_y(o->y);
         switch (o->tipo) {
         case OBSTACULO_PEDRA:
-            al_draw_filled_ellipse(x, y, o->meia_largura_px, o->meia_altura_px,
-                                   al_map_rgb(125, 125, 130));
-            al_draw_ellipse(x, y, o->meia_largura_px, o->meia_altura_px,
-                            al_map_rgb(190, 190, 195), 2.0f);
+            desenhar_imagem_obstaculo(imagem_pedra, o);
             break;
         case OBSTACULO_CONE:
-            al_draw_filled_triangle(x, y - o->meia_altura_px,
-                x - o->meia_largura_px, y + o->meia_altura_px,
-                x + o->meia_largura_px, y + o->meia_altura_px,
-                al_map_rgb(245, 115, 25));
-            al_draw_triangle(x, y - o->meia_altura_px,
-                x - o->meia_largura_px, y + o->meia_altura_px,
-                x + o->meia_largura_px, y + o->meia_altura_px,
-                al_map_rgb(255, 210, 120), 2.0f);
+            desenhar_imagem_obstaculo(imagem_cone, o);
             break;
         case OBSTACULO_BURACO:
-            al_draw_filled_ellipse(x, y, o->meia_largura_px, o->meia_altura_px,
-                                   al_map_rgb(105, 80, 55));
-            al_draw_filled_ellipse(x, y, o->meia_largura_px * 0.82f,
-                o->meia_altura_px * 0.72f, al_map_rgb(18, 18, 22));
+            desenhar_imagem_obstaculo(imagem_buraco, o);
             break;
         }
     }
