@@ -36,6 +36,22 @@ static void desenhar_carro(const Jogo *jogo, ALLEGRO_BITMAP *carro)
         jogo->angulo, 0);
 }
 
+static void desenhar_vitoria(ALLEGRO_FONT *fonte)
+{
+    ALLEGRO_COLOR fundo = al_map_rgba(10, 35, 18, 235);
+    ALLEGRO_COLOR verde = al_map_rgb(100, 255, 120);
+    ALLEGRO_COLOR branco = al_map_rgb(255, 255, 255);
+
+    al_draw_filled_rectangle(150, 190, 670, 300, fundo);
+    al_draw_rectangle(150, 190, 670, 300, verde, 4);
+    al_draw_text(fonte, verde, LARGURA / 2, 210, ALLEGRO_ALIGN_CENTER,
+        "VITORIA!");
+    al_draw_text(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTER,
+        "Voce cruzou a linha de chegada!");
+    al_draw_text(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTER,
+        "Digite outra funcao e aperte ENTER para jogar novamente.");
+}
+
 static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
     ALLEGRO_COLOR branco = al_map_rgb(255, 255, 255);
@@ -89,6 +105,7 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
     if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
     obstaculos_desenhar();
     desenhar_carro(jogo, carro);
+    if (jogo->estado == CHEGOU) desenhar_vitoria(fonte);
     desenhar_mensagem(jogo, fonte);
     campo_desenhar(texto, fonte);
     al_flip_display();
