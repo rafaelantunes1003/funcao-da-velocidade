@@ -5,12 +5,11 @@
 #include "coordenadas.h"
 #include "config.h"
 
-/* Obstáculos distribuídos pela pista, fora da trajetória horizontal f(x) = 1.
- * As dimensões maiores também ampliam as respectivas áreas de colisão. */
+/* Obstáculos maiores, posicionados sobre o asfalto e fora da trajetória f(x) = 1. */
 static const Obstaculo obstaculos[] = {
-    { OBSTACULO_PEDRA,  2.0, -2.2, 27.0f, 22.0f },
-    { OBSTACULO_CONE,   5.1,  3.4, 22.0f, 29.0f },
-    { OBSTACULO_BURACO, 8.0, -3.3, 34.0f, 20.0f }
+    { OBSTACULO_PEDRA,  2.0, -0.2, 42.0f, 36.0f },
+    { OBSTACULO_CONE,   5.1, -1.1, 40.0f, 38.0f },
+    { OBSTACULO_BURACO, 8.0, -1.8, 48.0f, 34.0f }
 };
 
 static ALLEGRO_BITMAP *imagem_pedra = NULL;
