@@ -96,6 +96,16 @@ int main(void)
         return -1;
     }
 
+    ALLEGRO_BITMAP* pista = al_load_bitmap("images/pista1.png");
+    if (!pista) {
+        fprintf(stderr, "Falha ao carregar images/pista1.png (confira a pasta images).\\n");
+        obstaculos_finalizar();
+        al_destroy_bitmap(carro);
+        menu_destruir(&menu);
+        al_destroy_display(janela);
+        return -1;
+    }
+
     ALLEGRO_FONT* fonte = carregar_fonte();
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / FPS);
@@ -155,7 +165,7 @@ int main(void)
                 menu_desenhar(&menu, fonte, LARGURA, ALTURA);
             }
             else {
-                desenhar_tela(&jogo, texto, carro, fonte);
+                desenhar_tela(&jogo, texto, carro, pista, fonte);
             }
         }
     }
@@ -164,6 +174,7 @@ int main(void)
     al_ustr_free(texto);
     al_destroy_font(fonte);
     obstaculos_finalizar();
+    al_destroy_bitmap(pista);
     al_destroy_bitmap(carro);
     menu_destruir(&menu);
     al_destroy_timer(timer);
