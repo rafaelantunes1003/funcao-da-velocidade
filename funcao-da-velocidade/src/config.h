@@ -17,7 +17,8 @@
 /* Parte do gráfico que aparece na pista */
 #define X_MIN 0.0
 #define X_MAX 10.0
-#define X_CHEGADA 8.0
+/* Borda final da faixa quadriculada da imagem da pista. */
+#define X_CHEGADA 8.8
 #define Y_MIN -5.0
 #define Y_MAX 5.0
 
