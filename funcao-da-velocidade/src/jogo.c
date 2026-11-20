@@ -73,7 +73,7 @@ void jogo_atualizar(Jogo *jogo)
     if (jogo->estado != ANDANDO) return;
 
     double novo_x = X_MIN + (jogo->passos + 1) * VELOCIDADE / FPS;
-    if (novo_x > X_MAX) novo_x = X_MAX;
+    if (novo_x > X_CHEGADA) novo_x = X_CHEGADA;
     double novo_y = expressao_avaliar(jogo->funcao, novo_x);
 
     if (!dentro_da_pista(novo_y)) {
@@ -95,7 +95,7 @@ void jogo_atualizar(Jogo *jogo)
     jogo->x = novo_x;
     jogo->y = novo_y;
     jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo);
-    if (jogo->x >= X_MAX) jogo->estado = CHEGOU;
+    if (jogo->x >= X_CHEGADA) jogo->estado = CHEGOU;
 }
 
 void jogo_finalizar(Jogo *jogo)
