@@ -18,7 +18,10 @@
 #define X_MIN 0.0
 #define X_MAX 10.0
 /* Borda final da faixa quadriculada da imagem da pista. */
-#define X_CHEGADA 8.8
+/* Centro da faixa quadriculada; a vitória também exige estar sobre o asfalto. */
+#define X_CHEGADA 8.35
+#define Y_CHEGADA_MIN -2.5
+#define Y_CHEGADA_MAX  2.5
 #define Y_MIN -5.0
 #define Y_MAX 5.0
 
