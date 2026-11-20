@@ -5,12 +5,12 @@
 #include "coordenadas.h"
 #include "config.h"
 
-/* Posições de exemplo em coordenadas do gráfico.
- * As dimensões também definem a área de colisão. */
+/* Obstáculos distribuídos pela pista, fora da trajetória horizontal f(x) = 1.
+ * As dimensões maiores também ampliam as respectivas áreas de colisão. */
 static const Obstaculo obstaculos[] = {
-    { OBSTACULO_PEDRA,  2.2,  1.5, 17.0f, 13.0f },
-    { OBSTACULO_CONE,   5.0, -1.8, 11.0f, 19.0f },
-    { OBSTACULO_BURACO, 7.8,  2.4, 25.0f, 11.0f }
+    { OBSTACULO_PEDRA,  2.0, -2.2, 27.0f, 22.0f },
+    { OBSTACULO_CONE,   5.1,  3.4, 22.0f, 29.0f },
+    { OBSTACULO_BURACO, 8.0, -3.3, 34.0f, 20.0f }
 };
 
 static ALLEGRO_BITMAP *imagem_pedra = NULL;
