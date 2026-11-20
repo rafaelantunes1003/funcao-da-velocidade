@@ -95,7 +95,12 @@ void jogo_atualizar(Jogo *jogo)
     jogo->x = novo_x;
     jogo->y = novo_y;
     jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo);
-    if (jogo->x >= X_CHEGADA) jogo->estado = CHEGOU;
+    if (jogo->x >= X_CHEGADA) {
+        if (jogo->y >= Y_CHEGADA_MIN && jogo->y <= Y_CHEGADA_MAX)
+            jogo->estado = CHEGOU;
+        else
+            sair_da_pista(jogo, jogo->x, jogo->y);
+    }
 }
 
 void jogo_finalizar(Jogo *jogo)
