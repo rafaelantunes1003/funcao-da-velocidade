@@ -100,9 +100,14 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
 }
 
 void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
-                   ALLEGRO_BITMAP *carro, ALLEGRO_FONT *fonte)
+                   ALLEGRO_BITMAP *carro, ALLEGRO_BITMAP *pista, ALLEGRO_FONT *fonte)
 {
     al_clear_to_color(al_map_rgb(0, 0, 0));
+    if (pista) {
+        al_draw_scaled_bitmap(pista, 0, 0,
+            (float)al_get_bitmap_width(pista), (float)al_get_bitmap_height(pista),
+            PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1, PISTA_Y2 - PISTA_Y1, 0);
+    }
     desenhar_grade(fonte);
     if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
     obstaculos_desenhar();
