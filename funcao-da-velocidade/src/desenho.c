@@ -7,28 +7,6 @@
 #include "campo_texto.h"
 #include "obstaculos.h"
 
-static void desenhar_grade(ALLEGRO_FONT *fonte)
-{
-    ALLEGRO_COLOR grade = al_map_rgb(45, 45, 45);
-    ALLEGRO_COLOR eixo = al_map_rgb(140, 140, 140);
-    ALLEGRO_COLOR numero = al_map_rgb(120, 120, 120);
-    int altura_fonte = al_get_font_line_height(fonte);
-    for (int i = (int)X_MIN; i <= (int)X_MAX; i++) {
-        float px = tela_x(i);
-        al_draw_line(px, PISTA_Y1, px, PISTA_Y2, grade, 1);
-        al_draw_textf(fonte, numero, px, PISTA_Y2 + 6, ALLEGRO_ALIGN_CENTRE, "%d", i);
-    }
-    for (int i = (int)Y_MIN; i <= (int)Y_MAX; i++) {
-        float py = tela_y(i);
-        al_draw_line(PISTA_X1, py, PISTA_X2, py, grade, 1);
-        al_draw_textf(fonte, numero, PISTA_X1 - 8, py - altura_fonte / 2.0f,
-                      ALLEGRO_ALIGN_RIGHT, "%d", i);
-    }
-    al_draw_line(PISTA_X1, tela_y(0), PISTA_X2, tela_y(0), eixo, 2);
-    al_draw_line(tela_x(0), PISTA_Y1, tela_x(0), PISTA_Y2, eixo, 2);
-    al_draw_rectangle(PISTA_X1, PISTA_Y1, PISTA_X2, PISTA_Y2, eixo, 2);
-}
-
 static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor)
 {
     double margem = Y_MAX - Y_MIN;
@@ -108,7 +86,6 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
             (float)al_get_bitmap_width(pista), (float)al_get_bitmap_height(pista),
             PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1, PISTA_Y2 - PISTA_Y1, 0);
     }
-    desenhar_grade(fonte);
     if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
     obstaculos_desenhar();
     desenhar_carro(jogo, carro);
