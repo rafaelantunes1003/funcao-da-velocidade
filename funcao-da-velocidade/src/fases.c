@@ -48,7 +48,7 @@ static const Fase fases[] = {
     { "images/pista1.png", centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1),
       "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1" },
     { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
-      "Subida em linha reta: digite x+5 para acompanhar o centro da pista." },
+      "Acompanhe a subida da estrada e mantenha o carro sobre o asfalto." },
     { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
       "A estrada desce e sobe em forma de U, como uma parabola." }
 };
