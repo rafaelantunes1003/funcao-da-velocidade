@@ -26,8 +26,8 @@
 #define Y_MIN -5.0
 #define Y_MAX 5.0
 /* Escala vertical ampliada para a fase 2, cuja resposta-alvo é y = x + 5. */
-#define FASE2_Y_MIN 2.0
-#define FASE2_Y_MAX 16.0
+#define FASE2_Y_MIN 4.0
+#define FASE2_Y_MAX 17.0
 
 /* Campo onde o jogador digita a função */
 #define CAMPO_X1 50
