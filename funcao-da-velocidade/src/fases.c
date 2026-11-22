@@ -24,9 +24,10 @@ static double centro_subida(double x)
 }
 
 static const Obstaculo obstaculos_fase2[] = {
-    { OBSTACULO_PEDRA,  2.6, -0.37, 32.0f, 28.0f },
-    { OBSTACULO_CONE,   5.0, -1.55, 30.0f, 28.0f },
-    { OBSTACULO_BURACO, 7.0,  3.15, 36.0f, 26.0f }
+    /* Mantidos nas laterais do asfalto, com folga para a funcao-alvo. */
+    { OBSTACULO_PEDRA,  2.6,  0.28, 30.0f, 25.0f },
+    { OBSTACULO_CONE,   5.0, -2.20, 30.0f, 25.0f },
+    { OBSTACULO_BURACO, 7.0,  3.80, 32.0f, 24.0f }
 };
 
 /* Fase 3: parábola, y = (x - 5)^2 / 5 - 3 */
@@ -47,7 +48,7 @@ static const Fase fases[] = {
     { "images/pista1.png", centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1),
       "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1" },
     { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
-      "A estrada agora e uma subida em linha reta. Qual funcao sobe assim?" },
+      "Subida em linha reta: digite 0.8x-4 para acompanhar o centro da pista." },
     { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
       "A estrada desce e sobe em forma de U, como uma parabola." }
 };
