@@ -10,8 +10,16 @@
 
 static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor, int indice_fase)
 {
-    double y_min = indice_fase == 1 ? FASE2_Y_MIN : Y_MIN;
-    double y_max = indice_fase == 1 ? FASE2_Y_MAX : Y_MAX;
+    double y_min = Y_MIN;
+    double y_max = Y_MAX;
+
+    if (indice_fase == 1) {
+        y_min = FASE2_Y_MIN;
+        y_max = FASE2_Y_MAX;
+    } else if (indice_fase == 2) {
+        y_min = FASE3_Y_MIN;
+        y_max = FASE3_Y_MAX;
+    }
     double margem = y_max - y_min;
     float altura_pista = PISTA_Y2 - PISTA_Y1;
     bool anterior_ok = false;
@@ -30,6 +38,61 @@ static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor, int indi
         py_anterior = py;
     }
     al_reset_clipping_rectangle();
+}
+
+static void desenhar_pista_parabola(const Fase *fase)
+{
+    ALLEGRO_COLOR grama = al_map_rgb(48, 105, 55);
+    ALLEGRO_COLOR borda = al_map_rgb(190, 185, 165);
+    ALLEGRO_COLOR asfalto = al_map_rgb(55, 58, 62);
+    ALLEGRO_COLOR faixa = al_map_rgb(245, 205, 65);
+
+    int fim_pista = (int)tela_x(X_CHEGADA);
+    al_clear_to_color(grama);
+
+    /* acostamento e asfalto acompanham a curva ate a chegada */
+    for (int px = PISTA_X1; px < fim_pista; px += 2) {
+        double x0 = X_MIN + (px - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
+        double x1 = X_MIN + (px + 2 - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
+        float y0 = tela_y_fase(fase->centro(x0), 2);
+        float y1 = tela_y_fase(fase->centro(x1), 2);
+
+        al_draw_line((float)px, y0, (float)(px + 2), y1, borda, 126);
+        al_draw_line((float)px, y0, (float)(px + 2), y1, asfalto, 116);
+    }
+
+    /* linha central tracejada */
+    for (int px = PISTA_X1; px < fim_pista; px += 42) {
+        int fim = px + 20;
+        if (fim > fim_pista) fim = fim_pista;
+        double x0 = X_MIN + (px - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
+        double x1 = X_MIN + (fim - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
+        al_draw_line((float)px, tela_y_fase(fase->centro(x0), 2),
+            (float)fim, tela_y_fase(fase->centro(x1), 2), faixa, 3);
+    }
+
+    /* faixa quadriculada na chegada, perpendicular a estrada */
+    {
+        double x = X_CHEGADA;
+        double antes = fase->centro(x - 0.01);
+        double depois = fase->centro(x + 0.01);
+        float cx = tela_x(x);
+        float cy = tela_y_fase(fase->centro(x), 2);
+        float dx = tela_x(x + 0.01) - tela_x(x - 0.01);
+        float dy = tela_y_fase(depois, 2) - tela_y_fase(antes, 2);
+        float tamanho = sqrtf(dx * dx + dy * dy);
+        float nx = -dy / tamanho;
+        float ny = dx / tamanho;
+
+        for (int i = 0; i < 8; i++) {
+            float a = -56.0f + i * 14.0f;
+            float b = a + 14.0f;
+            ALLEGRO_COLOR cor = (i % 2 == 0)
+                ? al_map_rgb(245, 245, 245) : al_map_rgb(25, 25, 25);
+            al_draw_line(cx + nx * a, cy + ny * a,
+                cx + nx * b, cy + ny * b, cor, 10);
+        }
+    }
 }
 
 static void desenhar_carro(const Jogo *jogo, ALLEGRO_BITMAP *carro)
@@ -123,7 +186,9 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
     ALLEGRO_BITMAP *pista = fases_imagem(jogo->fase);
 
     al_clear_to_color(al_map_rgb(0, 0, 0));
-    if (pista) {
+    if (jogo->fase == 2) {
+        desenhar_pista_parabola(fase);
+    } else if (pista) {
         al_draw_scaled_bitmap(pista, 0, 0,
             (float)al_get_bitmap_width(pista), (float)al_get_bitmap_height(pista),
             PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1, PISTA_Y2 - PISTA_Y1, 0);

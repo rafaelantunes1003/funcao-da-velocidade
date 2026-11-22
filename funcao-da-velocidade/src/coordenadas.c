@@ -13,7 +13,15 @@ float tela_y(double y)
 
 float tela_y_fase(double y, int indice_fase)
 {
-    double minimo = indice_fase == 1 ? FASE2_Y_MIN : Y_MIN;
-    double maximo = indice_fase == 1 ? FASE2_Y_MAX : Y_MAX;
+    double minimo = Y_MIN;
+    double maximo = Y_MAX;
+
+    if (indice_fase == 1) {
+        minimo = FASE2_Y_MIN;
+        maximo = FASE2_Y_MAX;
+    } else if (indice_fase == 2) {
+        minimo = FASE3_Y_MIN;
+        maximo = FASE3_Y_MAX;
+    }
     return (float)(PISTA_Y2 - (y - minimo) * (PISTA_Y2 - PISTA_Y1) / (maximo - minimo));
 }
