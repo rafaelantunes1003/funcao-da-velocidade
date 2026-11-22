@@ -47,10 +47,11 @@ static void desenhar_pista_parabola(const Fase *fase)
     ALLEGRO_COLOR asfalto = al_map_rgb(55, 58, 62);
     ALLEGRO_COLOR faixa = al_map_rgb(245, 205, 65);
 
+    int fim_pista = (int)tela_x(X_CHEGADA);
     al_clear_to_color(grama);
 
-    /* acostamento e asfalto acompanham a curva da funcao central */
-    for (int px = PISTA_X1; px < PISTA_X2; px += 2) {
+    /* acostamento e asfalto acompanham a curva ate a chegada */
+    for (int px = PISTA_X1; px < fim_pista; px += 2) {
         double x0 = X_MIN + (px - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
         double x1 = X_MIN + (px + 2 - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
         float y0 = tela_y_fase(fase->centro(x0), 2);
@@ -61,9 +62,9 @@ static void desenhar_pista_parabola(const Fase *fase)
     }
 
     /* linha central tracejada */
-    for (int px = PISTA_X1; px < PISTA_X2; px += 42) {
+    for (int px = PISTA_X1; px < fim_pista; px += 42) {
         int fim = px + 20;
-        if (fim > PISTA_X2) fim = PISTA_X2;
+        if (fim > fim_pista) fim = fim_pista;
         double x0 = X_MIN + (px - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
         double x1 = X_MIN + (fim - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
         al_draw_line((float)px, tela_y_fase(fase->centro(x0), 2),
