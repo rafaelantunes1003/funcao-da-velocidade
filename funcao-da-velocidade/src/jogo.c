@@ -14,7 +14,7 @@ static bool dentro_da_pista(const Jogo *jogo, double x, double y)
         && fase_no_asfalto(fases_obter(jogo->fase), x, y);
 }
 
-static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atual)
+static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atual, int indice_fase)
 {
     double passo = 0.01;
     double y1 = expressao_avaliar(funcao, x);
@@ -22,7 +22,7 @@ static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atu
     if (!isfinite(y1) || !isfinite(y2)) return angulo_atual;
 
     float dx = tela_x(x + passo) - tela_x(x);
-    float dy = tela_y_fase(y2, jogo->fase) - tela_y_fase(y1, jogo->fase);
+    float dy = tela_y_fase(y2, indice_fase) - tela_y_fase(y1, indice_fase);
     return atan2f(dy, dx) + CARRO_DIREITA;
 }
 
@@ -80,7 +80,7 @@ void jogo_largar(Jogo *jogo, const char *texto)
     double y_inicio = expressao_avaliar(jogo->funcao, jogo->x);
     if (dentro_da_pista(jogo, jogo->x, y_inicio)) {
         jogo->y = y_inicio;
-        jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo);
+        jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo, jogo->fase);
         jogo->estado = ANDANDO;
     } else {
         sair_da_pista(jogo, jogo->x, y_inicio);
