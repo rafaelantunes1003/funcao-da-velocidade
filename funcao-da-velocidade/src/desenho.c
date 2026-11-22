@@ -8,9 +8,11 @@
 #include "obstaculos.h"
 #include "fases.h"
 
-static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor)
+static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor, int indice_fase)
 {
-    double margem = Y_MAX - Y_MIN;
+    double y_min = indice_fase == 1 ? FASE2_Y_MIN : Y_MIN;
+    double y_max = indice_fase == 1 ? FASE2_Y_MAX : Y_MAX;
+    double margem = y_max - y_min;
     float altura_pista = PISTA_Y2 - PISTA_Y1;
     bool anterior_ok = false;
     float px_anterior = 0, py_anterior = 0;
@@ -19,8 +21,8 @@ static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor)
     for (int px = PISTA_X1; px <= PISTA_X2; px++) {
         double x = X_MIN + (px - PISTA_X1) * (X_MAX - X_MIN) / (PISTA_X2 - PISTA_X1);
         double y = expressao_avaliar(funcao, x);
-        bool ok = isfinite(y) && y > Y_MIN - margem && y < Y_MAX + margem;
-        float py = ok ? tela_y(y) : 0;
+        bool ok = isfinite(y) && y > y_min - margem && y < y_max + margem;
+        float py = ok ? tela_y_fase(y, indice_fase) : 0;
         if (ok && anterior_ok && fabsf(py - py_anterior) < altura_pista)
             al_draw_line(px_anterior, py_anterior, (float)px, py, cor, 3);
         anterior_ok = ok;
@@ -33,7 +35,7 @@ static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor)
 static void desenhar_carro(const Jogo *jogo, ALLEGRO_BITMAP *carro)
 {
     al_draw_scaled_rotated_bitmap(carro, CARRO_CENTRO_X, CARRO_CENTRO_Y,
-        tela_x(jogo->x), tela_y(jogo->y), CARRO_ESCALA, CARRO_ESCALA,
+        tela_x(jogo->x), tela_y_fase(jogo->y, jogo->fase), CARRO_ESCALA, CARRO_ESCALA,
         jogo->angulo, 0);
 }
 
@@ -126,8 +128,8 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
             (float)al_get_bitmap_width(pista), (float)al_get_bitmap_height(pista),
             PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1, PISTA_Y2 - PISTA_Y1, 0);
     }
-    if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
-    obstaculos_desenhar(fase->obstaculos, fase->num_obstaculos);
+    if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0), jogo->fase);
+    obstaculos_desenhar(fase->obstaculos, fase->num_obstaculos, jogo->fase);
     desenhar_carro(jogo, carro);
     desenhar_numero_da_fase(jogo, fonte);
     if (jogo->estado == CHEGOU) desenhar_vitoria(jogo, fonte);
