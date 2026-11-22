@@ -83,8 +83,7 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
     if (!jogo->funcao && jogo->erro[0] != '\0') {
         al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT, "Erro: %s", jogo->erro);
     } else if (jogo->estado == PARADO) {
-        al_draw_text(fonte, cinza, x, y, ALLEGRO_ALIGN_LEFT,
-            "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1");
+        al_draw_text(fonte, cinza, x, y, ALLEGRO_ALIGN_LEFT, fases_obter(jogo->fase)->dica);
     } else if (jogo->estado == ANDANDO) {
         al_draw_textf(fonte, branco, x, y, ALLEGRO_ALIGN_LEFT,
             "x = %.2f    f(x) = %.2f", jogo->x, jogo->y);

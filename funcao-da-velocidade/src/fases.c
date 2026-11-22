@@ -44,9 +44,12 @@ static const Obstaculo obstaculos_fase3[] = {
 #define QTD(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
 static const Fase fases[] = {
-    { "images/pista1.png", centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1) },
-    { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2) },
-    { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3) }
+    { "images/pista1.png", centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1),
+      "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1" },
+    { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
+      "A estrada agora e uma subida em linha reta. Qual funcao sobe assim?" },
+    { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
+      "A estrada desce e sobe em forma de U, como uma parabola." }
 };
 
 #define NUM_FASES QTD(fases)
