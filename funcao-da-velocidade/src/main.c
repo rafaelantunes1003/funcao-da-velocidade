@@ -12,6 +12,7 @@
 #include "desenho.h"
 #include "campo_texto.h"
 #include "obstaculos.h"
+#include "fases.h"
 
 static bool iniciar_allegro(void)
 {
@@ -50,7 +51,13 @@ static ALLEGRO_FONT* carregar_fonte(void)
 static void tratar_tecla(Jogo* jogo, ALLEGRO_USTR* texto, ALLEGRO_FONT* fonte, const ALLEGRO_KEYBOARD_EVENT* tecla)
 {
     if (tecla->keycode == ALLEGRO_KEY_ENTER || tecla->keycode == ALLEGRO_KEY_PAD_ENTER) {
-        jogo_largar(jogo, al_cstr(texto));
+        if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo)) {
+            jogo_proxima_fase(jogo);
+            al_ustr_truncate(texto, 0);
+        }
+        else {
+            jogo_largar(jogo, al_cstr(texto));
+        }
     }
     else if (tecla->keycode == ALLEGRO_KEY_BACKSPACE) {
         campo_apagar_ultima_letra(texto);
@@ -96,9 +103,7 @@ int main(void)
         return -1;
     }
 
-    ALLEGRO_BITMAP* pista = al_load_bitmap("images/pista1.png");
-    if (!pista) {
-        fprintf(stderr, "Falha ao carregar images/pista1.png (confira a pasta images).\\n");
+    if (!fases_inicializar()) {
         obstaculos_finalizar();
         al_destroy_bitmap(carro);
         menu_destruir(&menu);
@@ -165,7 +170,7 @@ int main(void)
                 menu_desenhar(&menu, fonte, LARGURA, ALTURA);
             }
             else {
-                desenhar_tela(&jogo, texto, carro, pista, fonte);
+                desenhar_tela(&jogo, texto, carro, fonte);
             }
         }
     }
@@ -174,7 +179,7 @@ int main(void)
     al_ustr_free(texto);
     al_destroy_font(fonte);
     obstaculos_finalizar();
-    al_destroy_bitmap(pista);
+    fases_finalizar();
     al_destroy_bitmap(carro);
     menu_destruir(&menu);
     al_destroy_timer(timer);

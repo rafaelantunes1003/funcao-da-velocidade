@@ -5,22 +5,11 @@
 #include "coordenadas.h"
 #include "config.h"
 
-/* Obstáculos maiores, posicionados sobre o asfalto e fora da trajetória f(x) = 1. */
-static const Obstaculo obstaculos[] = {
-    { OBSTACULO_PEDRA,  2.0, -0.2, 42.0f, 36.0f },
-    { OBSTACULO_CONE,   5.1, -1.1, 40.0f, 38.0f },
-    { OBSTACULO_BURACO, 8.0, -1.8, 48.0f, 34.0f }
-};
+/* As posições dos obstáculos de cada fase ficam em fases.c */
 
 static ALLEGRO_BITMAP *imagem_pedra = NULL;
 static ALLEGRO_BITMAP *imagem_cone = NULL;
 static ALLEGRO_BITMAP *imagem_buraco = NULL;
-
-const Obstaculo *obstaculos_obter(int *quantidade)
-{
-    if (quantidade) *quantidade = (int)(sizeof(obstaculos) / sizeof(obstaculos[0]));
-    return obstaculos;
-}
 
 bool obstaculos_inicializar(void)
 {
@@ -76,14 +65,15 @@ static bool segmento_intersecta_retangulo(float x0, float y0, float x1, float y1
     return true;
 }
 
-const Obstaculo *obstaculos_verificar_colisao(double x_anterior, double y_anterior,
+const Obstaculo *obstaculos_verificar_colisao(const Obstaculo *obstaculos, int quantidade,
+                                               double x_anterior, double y_anterior,
                                                double x_atual, double y_atual)
 {
     const float meia_largura_carro = 14.0f, meia_altura_carro = 7.0f;
     float x0 = tela_x(x_anterior), y0 = tela_y(y_anterior);
     float x1 = tela_x(x_atual), y1 = tela_y(y_atual);
 
-    for (size_t i = 0; i < sizeof(obstaculos) / sizeof(obstaculos[0]); i++) {
+    for (int i = 0; i < quantidade; i++) {
         const Obstaculo *o = &obstaculos[i];
         float cx = tela_x(o->x), cy = tela_y(o->y);
         float mx = o->meia_largura_px + meia_largura_carro;
@@ -117,9 +107,9 @@ static void desenhar_imagem_obstaculo(ALLEGRO_BITMAP *imagem,
         x - largura / 2.0f, y - altura / 2.0f, largura, altura, 0);
 }
 
-void obstaculos_desenhar(void)
+void obstaculos_desenhar(const Obstaculo *obstaculos, int quantidade)
 {
-    for (size_t i = 0; i < sizeof(obstaculos) / sizeof(obstaculos[0]); i++) {
+    for (int i = 0; i < quantidade; i++) {
         const Obstaculo *o = &obstaculos[i];
         switch (o->tipo) {
         case OBSTACULO_PEDRA:

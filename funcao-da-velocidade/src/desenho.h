@@ -7,6 +7,6 @@
 
 /* Desenha a tela inteira: pista, gráfico, carro, obstáculos, mensagem e campo de texto */
 void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
-                   ALLEGRO_BITMAP *carro, ALLEGRO_BITMAP *pista, ALLEGRO_FONT *fonte);
+                   ALLEGRO_BITMAP *carro, ALLEGRO_FONT *fonte);
 
 #endif

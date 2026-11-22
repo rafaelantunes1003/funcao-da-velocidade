@@ -3,10 +3,13 @@
 #include "jogo.h"
 #include "config.h"
 #include "coordenadas.h"
+#include "fases.h"
 
-static bool dentro_da_pista(double y)
+/* O carro precisa estar dentro da tela e em cima do asfalto da fase */
+static bool dentro_da_pista(const Jogo *jogo, double x, double y)
 {
-    return isfinite(y) && y >= Y_MIN && y <= Y_MAX;
+    return isfinite(y) && y >= Y_MIN && y <= Y_MAX
+        && fase_no_asfalto(fases_obter(jogo->fase), x, y);
 }
 
 static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atual)
@@ -30,6 +33,7 @@ static void sair_da_pista(Jogo *jogo, double x, double y)
 
 void jogo_iniciar(Jogo *jogo)
 {
+    jogo->fase = 0;
     jogo->funcao = NULL;
     jogo->erro[0] = '\0';
     jogo->estado = PARADO;
@@ -49,7 +53,7 @@ void jogo_largar(Jogo *jogo, const char *texto)
     jogo->funcao = nova;
     jogo->passos = 0;
     jogo->x = X_MIN;
-    jogo->y = 0;
+    jogo->y = fases_obter(jogo->fase)->centro(X_MIN);
     jogo->angulo = CARRO_DIREITA;
     jogo->obstaculo_colisao = NULL;
 
@@ -59,7 +63,7 @@ void jogo_largar(Jogo *jogo, const char *texto)
     }
 
     double y_inicio = expressao_avaliar(jogo->funcao, jogo->x);
-    if (dentro_da_pista(y_inicio)) {
+    if (dentro_da_pista(jogo, jogo->x, y_inicio)) {
         jogo->y = y_inicio;
         jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo);
         jogo->estado = ANDANDO;
@@ -76,12 +80,14 @@ void jogo_atualizar(Jogo *jogo)
     if (novo_x > X_CHEGADA) novo_x = X_CHEGADA;
     double novo_y = expressao_avaliar(jogo->funcao, novo_x);
 
-    if (!dentro_da_pista(novo_y)) {
+    if (!dentro_da_pista(jogo, novo_x, novo_y)) {
         sair_da_pista(jogo, novo_x, novo_y);
         return;
     }
 
+    const Fase *fase = fases_obter(jogo->fase);
     const Obstaculo *colisao = obstaculos_verificar_colisao(
+        fase->obstaculos, fase->num_obstaculos,
         jogo->x, jogo->y, novo_x, novo_y);
     if (colisao) {
         jogo->x = novo_x;
@@ -96,11 +102,22 @@ void jogo_atualizar(Jogo *jogo)
     jogo->y = novo_y;
     jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo);
     if (jogo->x >= X_CHEGADA) {
-        if (jogo->y >= Y_CHEGADA_MIN && jogo->y <= Y_CHEGADA_MAX)
-            jogo->estado = CHEGOU;
-        else
-            sair_da_pista(jogo, jogo->x, jogo->y);
+        jogo->estado = CHEGOU;
     }
+}
+
+bool jogo_tem_proxima_fase(const Jogo *jogo)
+{
+    return jogo->fase + 1 < fases_quantidade();
+}
+
+void jogo_proxima_fase(Jogo *jogo)
+{
+    int proxima = jogo->fase + 1;
+    jogo_finalizar(jogo);
+    jogo_iniciar(jogo);
+    jogo->fase = proxima;
+    jogo->y = fases_obter(proxima)->centro(X_MIN);   /* carro espera no começo da estrada */
 }
 
 void jogo_finalizar(Jogo *jogo)

@@ -18,20 +18,22 @@ typedef struct {
 } Obstaculo;
 
 /* Obstáculos são posicionados em coordenadas do gráfico.
- * As dimensões de colisão são definidas em pixels. */
-const Obstaculo *obstaculos_obter(int *quantidade);
+ * As dimensões de colisão são definidas em pixels.
+ * A lista de obstáculos de cada fase fica em fases.c. */
 
 /* Carrega e libera as imagens dos obstáculos. */
 bool obstaculos_inicializar(void);
 void obstaculos_finalizar(void);
 
 /* Verifica a colisão do carro ao percorrer o trecho entre dois pontos. */
-const Obstaculo *obstaculos_verificar_colisao(double x_anterior,
+const Obstaculo *obstaculos_verificar_colisao(const Obstaculo *obstaculos,
+                                               int quantidade,
+                                               double x_anterior,
                                                double y_anterior,
                                                double x_atual,
                                                double y_atual);
 
 /* Desenha as imagens dos obstáculos. */
-void obstaculos_desenhar(void);
+void obstaculos_desenhar(const Obstaculo *obstaculos, int quantidade);
 
 #endif

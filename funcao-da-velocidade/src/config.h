@@ -20,8 +20,9 @@
 /* Borda final da faixa quadriculada da imagem da pista. */
 /* Centro da faixa quadriculada; a vitória também exige estar sobre o asfalto. */
 #define X_CHEGADA 8.35
-#define Y_CHEGADA_MIN -2.5
-#define Y_CHEGADA_MAX  2.5
+/* Distância máxima (para cima ou para baixo) entre o carro e a linha amarela
+ * do meio da pista para o carro continuar no asfalto. */
+#define ASFALTO_MEIA_ALTURA 2.5
 #define Y_MIN -5.0
 #define Y_MAX 5.0
 

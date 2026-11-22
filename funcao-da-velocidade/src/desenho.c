@@ -6,6 +6,7 @@
 #include "coordenadas.h"
 #include "campo_texto.h"
 #include "obstaculos.h"
+#include "fases.h"
 
 static void desenhar_funcao(const Expressao *funcao, ALLEGRO_COLOR cor)
 {
@@ -36,7 +37,7 @@ static void desenhar_carro(const Jogo *jogo, ALLEGRO_BITMAP *carro)
         jogo->angulo, 0);
 }
 
-static void desenhar_vitoria(ALLEGRO_FONT *fonte)
+static void desenhar_vitoria(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
     ALLEGRO_COLOR fundo = al_map_rgba(10, 35, 18, 235);
     ALLEGRO_COLOR verde = al_map_rgb(100, 255, 120);
@@ -46,10 +47,28 @@ static void desenhar_vitoria(ALLEGRO_FONT *fonte)
     al_draw_rectangle(150, 190, 670, 300, verde, 4);
     al_draw_text(fonte, verde, LARGURA / 2, 210, ALLEGRO_ALIGN_CENTER,
         "VITORIA!");
-    al_draw_text(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTER,
-        "Voce cruzou a linha de chegada!");
-    al_draw_text(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTER,
-        "Digite outra funcao e aperte ENTER para jogar novamente.");
+
+    if (jogo_tem_proxima_fase(jogo)) {
+        al_draw_textf(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTER,
+            "Voce passou da fase %d!", jogo->fase + 1);
+        al_draw_textf(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTER,
+            "Aperte ENTER para ir para a fase %d.", jogo->fase + 2);
+    } else {
+        al_draw_text(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTER,
+            "Voce completou todas as fases!");
+        al_draw_text(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTER,
+            "Digite outra funcao e aperte ENTER para jogar novamente.");
+    }
+}
+
+static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
+{
+    int altura = al_get_font_line_height(fonte);
+
+    al_draw_filled_rectangle(PISTA_X1, PISTA_Y1, PISTA_X1 + 90, PISTA_Y1 + altura + 10,
+        al_map_rgba(0, 0, 0, 180));
+    al_draw_textf(fonte, al_map_rgb(255, 255, 255), PISTA_X1 + 45, PISTA_Y1 + 5,
+        ALLEGRO_ALIGN_CENTER, "FASE %d", jogo->fase + 1);
 }
 
 static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
@@ -69,6 +88,9 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
     } else if (jogo->estado == ANDANDO) {
         al_draw_textf(fonte, branco, x, y, ALLEGRO_ALIGN_LEFT,
             "x = %.2f    f(x) = %.2f", jogo->x, jogo->y);
+    } else if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo)) {
+        al_draw_textf(fonte, verde, x, y, ALLEGRO_ALIGN_LEFT,
+            "Chegou! f(%.2f) = %.2f   (ENTER vai para a fase %d)", jogo->x, jogo->y, jogo->fase + 2);
     } else if (jogo->estado == CHEGOU) {
         al_draw_textf(fonte, verde, x, y, ALLEGRO_ALIGN_LEFT,
             "Chegou! f(%.0f) = %.2f   (ENTER corre de novo)", jogo->x, jogo->y);
@@ -94,8 +116,11 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
 }
 
 void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
-                   ALLEGRO_BITMAP *carro, ALLEGRO_BITMAP *pista, ALLEGRO_FONT *fonte)
+                   ALLEGRO_BITMAP *carro, ALLEGRO_FONT *fonte)
 {
+    const Fase *fase = fases_obter(jogo->fase);
+    ALLEGRO_BITMAP *pista = fases_imagem(jogo->fase);
+
     al_clear_to_color(al_map_rgb(0, 0, 0));
     if (pista) {
         al_draw_scaled_bitmap(pista, 0, 0,
@@ -103,9 +128,10 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
             PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1, PISTA_Y2 - PISTA_Y1, 0);
     }
     if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0));
-    obstaculos_desenhar();
+    obstaculos_desenhar(fase->obstaculos, fase->num_obstaculos);
     desenhar_carro(jogo, carro);
-    if (jogo->estado == CHEGOU) desenhar_vitoria(fonte);
+    desenhar_numero_da_fase(jogo, fonte);
+    if (jogo->estado == CHEGOU) desenhar_vitoria(jogo, fonte);
     desenhar_mensagem(jogo, fonte);
     campo_desenhar(texto, fonte);
     al_flip_display();
