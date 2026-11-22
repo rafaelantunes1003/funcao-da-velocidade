@@ -8,7 +8,9 @@
 /* O carro precisa estar dentro da tela e em cima do asfalto da fase */
 static bool dentro_da_pista(const Jogo *jogo, double x, double y)
 {
-    return isfinite(y) && y >= Y_MIN && y <= Y_MAX
+    double minimo = jogo->fase == 1 ? FASE2_Y_MIN : Y_MIN;
+    double maximo = jogo->fase == 1 ? FASE2_Y_MAX : Y_MAX;
+    return isfinite(y) && y >= minimo && y <= maximo
         && fase_no_asfalto(fases_obter(jogo->fase), x, y);
 }
 
@@ -20,7 +22,7 @@ static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atu
     if (!isfinite(y1) || !isfinite(y2)) return angulo_atual;
 
     float dx = tela_x(x + passo) - tela_x(x);
-    float dy = tela_y(y2) - tela_y(y1);
+    float dy = tela_y_fase(y2, jogo->fase) - tela_y_fase(y1, jogo->fase);
     return atan2f(dy, dx) + CARRO_DIREITA;
 }
 
@@ -32,7 +34,7 @@ static void colocar_na_largada(Jogo *jogo)
     double y1 = fase->centro(X_MIN);
     double y2 = fase->centro(X_MIN + passo);
     float dx = tela_x(X_MIN + passo) - tela_x(X_MIN);
-    float dy = tela_y(y2) - tela_y(y1);
+    float dy = tela_y_fase(y2, jogo->fase) - tela_y_fase(y1, jogo->fase);
 
     jogo->x = X_MIN;
     jogo->y = y1;
@@ -100,7 +102,7 @@ void jogo_atualizar(Jogo *jogo)
 
     const Fase *fase = fases_obter(jogo->fase);
     const Obstaculo *colisao = obstaculos_verificar_colisao(
-        fase->obstaculos, fase->num_obstaculos,
+        fase->obstaculos, fase->num_obstaculos, jogo->fase,
         jogo->x, jogo->y, novo_x, novo_y);
     if (colisao) {
         jogo->x = novo_x;
