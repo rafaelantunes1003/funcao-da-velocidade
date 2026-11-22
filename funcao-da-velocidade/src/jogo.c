@@ -34,7 +34,7 @@ static void colocar_na_largada(Jogo *jogo)
     double y1 = fase->centro(X_MIN);
     double y2 = fase->centro(X_MIN + passo);
     float dx = tela_x(X_MIN + passo) - tela_x(X_MIN);
-    float dy = tela_y_fase(y2, jogo->fase) - tela_y_fase(y1, jogo->fase);
+    float dy = tela_y_fase(y2, indice_fase) - tela_y_fase(y1, indice_fase);
 
     jogo->x = X_MIN;
     jogo->y = y1;
@@ -115,7 +115,7 @@ void jogo_atualizar(Jogo *jogo)
     jogo->passos++;
     jogo->x = novo_x;
     jogo->y = novo_y;
-    jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo);
+    jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo, jogo->fase);
     if (jogo->x >= X_CHEGADA) {
         jogo->estado = CHEGOU;
     }
