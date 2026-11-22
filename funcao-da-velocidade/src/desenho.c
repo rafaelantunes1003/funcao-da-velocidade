@@ -93,7 +93,7 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
             "Chegou! f(%.2f) = %.2f   (ENTER vai para a fase %d)", jogo->x, jogo->y, jogo->fase + 2);
     } else if (jogo->estado == CHEGOU) {
         al_draw_textf(fonte, verde, x, y, ALLEGRO_ALIGN_LEFT,
-            "Chegou! f(%.0f) = %.2f   (ENTER corre de novo)", jogo->x, jogo->y);
+            "Chegou! f(%.2f) = %.2f   (ENTER corre de novo)", jogo->x, jogo->y);
     } else if (jogo->estado == COLIDIU) {
         const char *nome = "obstaculo";
         if (jogo->obstaculo_colisao) {
