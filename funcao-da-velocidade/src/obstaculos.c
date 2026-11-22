@@ -66,16 +66,17 @@ static bool segmento_intersecta_retangulo(float x0, float y0, float x1, float y1
 }
 
 const Obstaculo *obstaculos_verificar_colisao(const Obstaculo *obstaculos, int quantidade,
+                                               int indice_fase,
                                                double x_anterior, double y_anterior,
                                                double x_atual, double y_atual)
 {
     const float meia_largura_carro = 14.0f, meia_altura_carro = 7.0f;
-    float x0 = tela_x(x_anterior), y0 = tela_y(y_anterior);
-    float x1 = tela_x(x_atual), y1 = tela_y(y_atual);
+    float x0 = tela_x(x_anterior), y0 = tela_y_fase(y_anterior, indice_fase);
+    float x1 = tela_x(x_atual), y1 = tela_y_fase(y_atual, indice_fase);
 
     for (int i = 0; i < quantidade; i++) {
         const Obstaculo *o = &obstaculos[i];
-        float cx = tela_x(o->x), cy = tela_y(o->y);
+        float cx = tela_x(o->x), cy = tela_y_fase(o->y, indice_fase);
         float mx = o->meia_largura_px + meia_largura_carro;
         float my = o->meia_altura_px + meia_altura_carro;
         if (segmento_intersecta_retangulo(x0, y0, x1, y1,
@@ -87,7 +88,7 @@ const Obstaculo *obstaculos_verificar_colisao(const Obstaculo *obstaculos, int q
 
 /* Mantém a proporção original e encaixa a imagem na área definida para o obstáculo. */
 static void desenhar_imagem_obstaculo(ALLEGRO_BITMAP *imagem,
-                                      const Obstaculo *obstaculo)
+                                      const Obstaculo *obstaculo, int indice_fase)
 {
     if (!imagem) return;
 
@@ -101,25 +102,25 @@ static void desenhar_imagem_obstaculo(ALLEGRO_BITMAP *imagem,
     float largura = largura_original * escala;
     float altura = altura_original * escala;
     float x = tela_x(obstaculo->x);
-    float y = tela_y(obstaculo->y);
+    float y = tela_y_fase(obstaculo->y, indice_fase);
 
     al_draw_scaled_bitmap(imagem, 0, 0, largura_original, altura_original,
         x - largura / 2.0f, y - altura / 2.0f, largura, altura, 0);
 }
 
-void obstaculos_desenhar(const Obstaculo *obstaculos, int quantidade)
+void obstaculos_desenhar(const Obstaculo *obstaculos, int quantidade, int indice_fase)
 {
     for (int i = 0; i < quantidade; i++) {
         const Obstaculo *o = &obstaculos[i];
         switch (o->tipo) {
         case OBSTACULO_PEDRA:
-            desenhar_imagem_obstaculo(imagem_pedra, o);
+            desenhar_imagem_obstaculo(imagem_pedra, o, indice_fase);
             break;
         case OBSTACULO_CONE:
-            desenhar_imagem_obstaculo(imagem_cone, o);
+            desenhar_imagem_obstaculo(imagem_cone, o, indice_fase);
             break;
         case OBSTACULO_BURACO:
-            desenhar_imagem_obstaculo(imagem_buraco, o);
+            desenhar_imagem_obstaculo(imagem_buraco, o, indice_fase);
             break;
         }
     }

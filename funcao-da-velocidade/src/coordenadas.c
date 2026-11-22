@@ -8,5 +8,12 @@ float tela_x(double x)
 
 float tela_y(double y)
 {
-    return (float)(PISTA_Y2 - (y - Y_MIN) * (PISTA_Y2 - PISTA_Y1) / (Y_MAX - Y_MIN));
+    return tela_y_fase(y, 0);
+}
+
+float tela_y_fase(double y, int indice_fase)
+{
+    double minimo = indice_fase == 1 ? FASE2_Y_MIN : Y_MIN;
+    double maximo = indice_fase == 1 ? FASE2_Y_MAX : Y_MAX;
+    return (float)(PISTA_Y2 - (y - minimo) * (PISTA_Y2 - PISTA_Y1) / (maximo - minimo));
 }

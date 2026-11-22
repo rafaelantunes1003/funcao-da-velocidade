@@ -28,12 +28,13 @@ void obstaculos_finalizar(void);
 /* Verifica a colisão do carro ao percorrer o trecho entre dois pontos. */
 const Obstaculo *obstaculos_verificar_colisao(const Obstaculo *obstaculos,
                                                int quantidade,
+                                               int indice_fase,
                                                double x_anterior,
                                                double y_anterior,
                                                double x_atual,
                                                double y_atual);
 
 /* Desenha as imagens dos obstáculos. */
-void obstaculos_desenhar(const Obstaculo *obstaculos, int quantidade);
+void obstaculos_desenhar(const Obstaculo *obstaculos, int quantidade, int indice_fase);
 
 #endif
