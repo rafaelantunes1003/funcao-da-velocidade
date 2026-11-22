@@ -24,6 +24,21 @@ static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atu
     return atan2f(dy, dx) + CARRO_DIREITA;
 }
 
+/* Põe o carro parado no começo da estrada, virado para o mesmo lado dela */
+static void colocar_na_largada(Jogo *jogo)
+{
+    const Fase *fase = fases_obter(jogo->fase);
+    double passo = 0.01;
+    double y1 = fase->centro(X_MIN);
+    double y2 = fase->centro(X_MIN + passo);
+    float dx = tela_x(X_MIN + passo) - tela_x(X_MIN);
+    float dy = tela_y(y2) - tela_y(y1);
+
+    jogo->x = X_MIN;
+    jogo->y = y1;
+    jogo->angulo = atan2f(dy, dx) + CARRO_DIREITA;
+}
+
 static void sair_da_pista(Jogo *jogo, double x, double y)
 {
     jogo->x_saida = x;
@@ -52,9 +67,7 @@ void jogo_largar(Jogo *jogo, const char *texto)
     expressao_liberar(jogo->funcao);
     jogo->funcao = nova;
     jogo->passos = 0;
-    jogo->x = X_MIN;
-    jogo->y = fases_obter(jogo->fase)->centro(X_MIN);
-    jogo->angulo = CARRO_DIREITA;
+    colocar_na_largada(jogo);
     jogo->obstaculo_colisao = NULL;
 
     if (!jogo->funcao) {
@@ -117,7 +130,7 @@ void jogo_proxima_fase(Jogo *jogo)
     jogo_finalizar(jogo);
     jogo_iniciar(jogo);
     jogo->fase = proxima;
-    jogo->y = fases_obter(proxima)->centro(X_MIN);   /* carro espera no começo da estrada */
+    colocar_na_largada(jogo);
 }
 
 void jogo_finalizar(Jogo *jogo)
