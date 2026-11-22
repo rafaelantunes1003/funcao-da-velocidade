@@ -39,9 +39,12 @@
     <ClCompile Include="src\menu.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
     <ClCompile Include="src\fases.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+=======
+>>>>>>> Stashed changes
     <ClCompile Include="src\obstaculos.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
