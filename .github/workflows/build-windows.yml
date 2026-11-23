@@ -41,12 +41,22 @@ jobs:
           cp funcao-da-velocidade/movimento.exe dist/
           cp funcao-da-velocidade/images/* dist/images/
           cp /ucrt64/bin/*.dll dist/
+          cat > dist/INICIAR.bat <<'EOF'
+          @echo off
+          cd /d "%~dp0"
+          movimento.exe
+          if errorlevel 1 (
+            echo.
+            echo O jogo terminou com erro. Confira se todos os arquivos foram extraidos.
+            pause
+          )
+          EOF
           cat > dist/LEIA-ME.txt <<'EOF'
           FUNCAO DA VELOCIDADE - WINDOWS
-          
-          Execute movimento.exe para jogar.
-          Mantenha a pasta images ao lado do executavel.
-          Se o Windows bloquear o arquivo, confirme que deseja executar.
+
+          Extraia TODO o conteudo deste ZIP para uma pasta.
+          Abra INICIAR.bat (ou movimento.exe).
+          Nao mova o executavel para fora desta pasta: images e as DLLs precisam ficar ao lado dele.
           EOF
           cd dist
           zip -r ../funcao-da-velocidade-windows.zip .
@@ -55,7 +65,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: funcao-da-velocidade-windows
-          path: |
-            funcao-da-velocidade/movimento.exe
-            funcao-da-velocidade-windows.zip
+          path: funcao-da-velocidade-windows.zip
           if-no-files-found: error
