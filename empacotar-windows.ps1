@@ -16,7 +16,7 @@ if (-not $msbuild) {
 }
 
 Write-Host "Compilando Release x64..."
-& $msbuild.Source $solution /m /t:Build /p:Configuration=Release /p:Platform=x64 /p:RestorePackagesConfig=true
+& $msbuild.Source $solution /restore /m /t:Build /p:Configuration=Release /p:Platform=x64 /p:RestorePackagesConfig=true
 if ($LASTEXITCODE -ne 0) {
     throw "A compilacao falhou. Confira as mensagens do MSBuild e restaure os pacotes NuGet no Visual Studio."
 }
