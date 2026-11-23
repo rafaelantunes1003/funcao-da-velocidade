@@ -1,0 +1,61 @@
+name: Build Windows game
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "funcao-da-velocidade/**"
+      - ".github/workflows/build-windows.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure MSYS2 UCRT64
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-allegro
+            zip
+
+      - name: Compile
+        run: |
+          cd funcao-da-velocidade
+          gcc -std=c11 -O2 -Wall src/*.c -o movimento.exe \
+            $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5) -lm
+
+      - name: Prepare portable package
+        run: |
+          mkdir -p dist/images
+          cp funcao-da-velocidade/movimento.exe dist/
+          cp funcao-da-velocidade/images/* dist/images/
+          cp /ucrt64/bin/*.dll dist/
+          cat > dist/LEIA-ME.txt <<'EOF'
+          FUNCAO DA VELOCIDADE - WINDOWS
+          
+          Execute movimento.exe para jogar.
+          Mantenha a pasta images ao lado do executavel.
+          Se o Windows bloquear o arquivo, confirme que deseja executar.
+          EOF
+          cd dist
+          zip -r ../funcao-da-velocidade-windows.zip .
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: funcao-da-velocidade-windows
+          path: |
+            funcao-da-velocidade/movimento.exe
+            funcao-da-velocidade-windows.zip
+          if-no-files-found: error
