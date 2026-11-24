@@ -63,6 +63,38 @@ static void desenhar_vitoria(const Jogo *jogo, ALLEGRO_FONT *fonte)
     }
 }
 
+static void desenhar_botao(ALLEGRO_FONT *fonte, int x1, int x2, const char *rotulo)
+{
+    ALLEGRO_COLOR fundo = al_map_rgb(35, 90, 130);
+    ALLEGRO_COLOR borda = al_map_rgb(230, 240, 250);
+    int y1 = 5;
+    int y2 = 28;
+    al_draw_filled_rounded_rectangle((float)x1, (float)y1, (float)x2, (float)y2,
+        5, 5, fundo);
+    al_draw_rounded_rectangle((float)x1, (float)y1, (float)x2, (float)y2,
+        5, 5, borda, 1);
+    al_draw_text(fonte, borda, (x1 + x2) / 2, y1 + 4,
+        ALLEGRO_ALIGN_CENTER, rotulo);
+}
+
+int desenho_identificar_botao(int x, int y, const Jogo *jogo)
+{
+    if (y < 5 || y > 28) return 0;
+    if (x >= 600 && x <= 680) return BOTAO_MENU;
+    if (x >= 686 && x <= 790) return BOTAO_REINICIAR;
+    if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo)
+        && x >= 470 && x <= 590) return BOTAO_PROXIMA_FASE;
+    return 0;
+}
+
+static void desenhar_botoes(const Jogo *jogo, ALLEGRO_FONT *fonte)
+{
+    if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo))
+        desenhar_botao(fonte, 470, 590, "PROXIMA FASE");
+    desenhar_botao(fonte, 600, 680, "MENU");
+    desenhar_botao(fonte, 686, 790, "REINICIAR");
+}
+
 static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
     int altura = al_get_font_line_height(fonte);
@@ -132,6 +164,7 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
     obstaculos_desenhar(fase->obstaculos, fase->num_obstaculos, jogo->fase);
     desenhar_carro(jogo, carro);
     desenhar_numero_da_fase(jogo, fonte);
+    desenhar_botoes(jogo, fonte);
     if (jogo->estado == CHEGOU) desenhar_vitoria(jogo, fonte);
     desenhar_mensagem(jogo, fonte);
     campo_desenhar(texto, fonte);
