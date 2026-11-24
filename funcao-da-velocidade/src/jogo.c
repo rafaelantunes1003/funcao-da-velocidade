@@ -67,7 +67,7 @@ void jogo_reiniciar_fase(Jogo *jogo)
 {
     expressao_liberar(jogo->funcao);
     jogo->funcao = NULL;
-    jogo->erro[0] = '\\0';
+    jogo->erro[0] = '\0';
     jogo->estado = PARADO;
     jogo->passos = 0;
     jogo->x_saida = 0;
