@@ -147,6 +147,27 @@ int main(void)
                 }
                 redesenhar = true;
             }
+            else if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN
+                && evento.mouse.button == 1) {
+                int botao = desenho_identificar_botao(
+                    evento.mouse.x, evento.mouse.y, &jogo);
+
+                if (botao == BOTAO_MENU) {
+                    jogo_finalizar(&jogo);
+                    jogo_iniciar(&jogo);
+                    al_ustr_truncate(texto, 0);
+                    tela_atual = TELA_INICIAL;
+                }
+                else if (botao == BOTAO_REINICIAR) {
+                    jogo_reiniciar_fase(&jogo);
+                    al_ustr_truncate(texto, 0);
+                }
+                else if (botao == BOTAO_PROXIMA_FASE) {
+                    jogo_proxima_fase(&jogo);
+                    al_ustr_truncate(texto, 0);
+                }
+                redesenhar = true;
+            }
             break;
 
         case ALLEGRO_EVENT_KEY_CHAR:
