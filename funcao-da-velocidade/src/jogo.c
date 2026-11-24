@@ -63,6 +63,19 @@ void jogo_iniciar(Jogo *jogo)
     jogo->obstaculo_colisao = NULL;
 }
 
+void jogo_reiniciar_fase(Jogo *jogo)
+{
+    expressao_liberar(jogo->funcao);
+    jogo->funcao = NULL;
+    jogo->erro[0] = '\0';
+    jogo->estado = PARADO;
+    jogo->passos = 0;
+    jogo->x_saida = 0;
+    jogo->y_saida = 0;
+    jogo->obstaculo_colisao = NULL;
+    colocar_na_largada(jogo);
+}
+
 void jogo_largar(Jogo *jogo, const char *texto)
 {
     Expressao *nova = expressao_compilar(texto, jogo->erro, sizeof(jogo->erro));

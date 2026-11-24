@@ -1,0 +1,69 @@
+name: Build Windows game
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "funcao-da-velocidade/**"
+      - ".github/workflows/build-windows.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure MSYS2 UCRT64
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-allegro
+            zip
+
+      - name: Compile
+        run: |
+          cd funcao-da-velocidade
+          gcc -std=c11 -O2 -Wall src/*.c -o movimento.exe \
+            $(pkg-config --cflags --libs allegro-5 allegro_image-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5) -lm
+
+      - name: Prepare portable package
+        run: |
+          mkdir -p dist/images
+          cp funcao-da-velocidade/movimento.exe dist/
+          cp funcao-da-velocidade/images/* dist/images/
+          cp /ucrt64/bin/*.dll dist/
+          cat > dist/INICIAR.bat <<'EOF'
+          @echo off
+          cd /d "%~dp0"
+          movimento.exe
+          if errorlevel 1 (
+            echo.
+            echo O jogo terminou com erro. Confira se todos os arquivos foram extraidos.
+            pause
+          )
+          EOF
+          cat > dist/LEIA-ME.txt <<'EOF'
+          FUNCAO DA VELOCIDADE - WINDOWS
+
+          Extraia TODO o conteudo deste ZIP para uma pasta.
+          Abra INICIAR.bat (ou movimento.exe).
+          Nao mova o executavel para fora desta pasta: images e as DLLs precisam ficar ao lado dele.
+          EOF
+          cd dist
+          zip -r ../funcao-da-velocidade-windows.zip .
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: funcao-da-velocidade-windows
+          path: funcao-da-velocidade-windows.zip
+          if-no-files-found: error
