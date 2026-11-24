@@ -8,16 +8,8 @@
 /* O carro precisa estar dentro da tela e em cima do asfalto da fase */
 static bool dentro_da_pista(const Jogo *jogo, double x, double y)
 {
-    double minimo = Y_MIN;
-    double maximo = Y_MAX;
-
-    if (jogo->fase == 1) {
-        minimo = FASE2_Y_MIN;
-        maximo = FASE2_Y_MAX;
-    } else if (jogo->fase == 2) {
-        minimo = FASE3_Y_MIN;
-        maximo = FASE3_Y_MAX;
-    }
+    double minimo = jogo->fase == 1 ? FASE2_Y_MIN : Y_MIN;
+    double maximo = jogo->fase == 1 ? FASE2_Y_MAX : Y_MAX;
     return isfinite(y) && y >= minimo && y <= maximo
         && fase_no_asfalto(fases_obter(jogo->fase), x, y);
 }

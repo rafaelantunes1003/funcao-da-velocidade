@@ -28,9 +28,6 @@
 /* Escala vertical ampliada para a fase 2, cuja resposta-alvo é y = x + 5. */
 #define FASE2_Y_MIN 4.0
 #define FASE2_Y_MAX 17.0
-#define FASE3_Y_MIN -3.5
-#define FASE3_Y_MAX 4.0
-#define FASE3_ASFALTO_MEIA_ALTURA 1.0
 
 /* Campo onde o jogador digita a função */
 #define CAMPO_X1 50

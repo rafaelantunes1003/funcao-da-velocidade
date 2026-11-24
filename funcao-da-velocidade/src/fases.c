@@ -30,11 +30,17 @@ static const Obstaculo obstaculos_fase2[] = {
     { OBSTACULO_BURACO, 7.0, 14.0, 32.0f, 24.0f }
 };
 
-/* Fase 3: parábola simples, y = x^2/4 - 2x + 2. */
+/* Fase 3: parábola, y = (x - 5)^2 / 5 - 3 */
 static double centro_parabola(double x)
 {
-    return x * x / 4.0 - 2.0 * x + 2.0;
+    return (x - 5.0) * (x - 5.0) / 5.0 - 3.0;
 }
+
+static const Obstaculo obstaculos_fase3[] = {
+    { OBSTACULO_PEDRA,  2.0, -2.90,  32.0f, 28.0f },
+    { OBSTACULO_CONE,   5.0, -1.25,  30.0f, 28.0f },
+    { OBSTACULO_BURACO, 7.3, -0.342, 36.0f, 26.0f }
+};
 
 #define QTD(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
@@ -43,8 +49,8 @@ static const Fase fases[] = {
       "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1" },
     { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
       "Acompanhe a subida da estrada e mantenha o carro sobre o asfalto." },
-    { "images/pista3.png", centro_parabola, NULL, 0,
-      "Encontre uma funcao quadratica que acompanhe a estrada." }
+    { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
+      "A estrada desce e sobe em forma de U, como uma parabola." }
 };
 
 #define NUM_FASES QTD(fases)
@@ -89,7 +95,5 @@ ALLEGRO_BITMAP *fases_imagem(int indice)
 
 bool fase_no_asfalto(const Fase *fase, double x, double y)
 {
-    double meia_altura = fase->centro == centro_parabola
-        ? FASE3_ASFALTO_MEIA_ALTURA : ASFALTO_MEIA_ALTURA;
-    return fabs(y - fase->centro(x)) <= meia_altura;
+    return fabs(y - fase->centro(x)) <= ASFALTO_MEIA_ALTURA;
 }
