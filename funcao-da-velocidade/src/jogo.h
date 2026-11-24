@@ -27,6 +27,7 @@ typedef struct {
 
 void jogo_iniciar(Jogo *jogo);
 void jogo_largar(Jogo *jogo, const char *texto);
+void jogo_reiniciar_fase(Jogo *jogo);
 void jogo_atualizar(Jogo *jogo);
 
 /* Depois de vencer: existe uma próxima fase? */
