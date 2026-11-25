@@ -42,6 +42,43 @@ static const Obstaculo obstaculos_fase3[] = {
     { OBSTACULO_BURACO, 7.3, -0.342, 36.0f, 26.0f }
 };
 
+/* Fase 4: corredor em ondas; a linha segura acompanha y = sen(x). */
+static double centro_seno(double x)
+{
+    return sin(x);
+}
+
+static const Obstaculo obstaculos_fase4[] = {
+    { OBSTACULO_CONE, 0.60, sin(0.60) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 0.60, sin(0.60) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 1.15, sin(1.15) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 1.15, sin(1.15) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 1.70, sin(1.70) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 1.70, sin(1.70) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 2.25, sin(2.25) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 2.25, sin(2.25) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 2.80, sin(2.80) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 2.80, sin(2.80) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 3.35, sin(3.35) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 3.35, sin(3.35) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 3.90, sin(3.90) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 3.90, sin(3.90) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 4.45, sin(4.45) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 4.45, sin(4.45) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 5.00, sin(5.00) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 5.00, sin(5.00) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 5.55, sin(5.55) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 5.55, sin(5.55) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 6.10, sin(6.10) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 6.10, sin(6.10) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 6.65, sin(6.65) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 6.65, sin(6.65) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 7.20, sin(7.20) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 7.20, sin(7.20) + 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 7.75, sin(7.75) - 0.9, 22.0f, 22.0f },
+    { OBSTACULO_CONE, 7.75, sin(7.75) + 0.9, 22.0f, 22.0f }
+};
+
 #define QTD(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
 static const Fase fases[] = {
@@ -50,7 +87,9 @@ static const Fase fases[] = {
     { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
       "Acompanhe a subida da estrada e mantenha o carro sobre o asfalto." },
     { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
-      "A estrada desce e sobe em forma de U, como uma parabola." }
+      "A estrada desce e sobe em forma de U, como uma parabola." },
+    { "images/pista1.png", centro_seno, obstaculos_fase4, QTD(obstaculos_fase4),
+      "Desvie das fileiras de cones seguindo a onda: digite sen(x). O seno usa radianos." }
 };
 
 #define NUM_FASES QTD(fases)
