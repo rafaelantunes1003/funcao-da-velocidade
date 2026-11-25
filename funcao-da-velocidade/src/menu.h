@@ -5,6 +5,7 @@
 
 typedef enum {
     TELA_INICIAL,
+    TELA_SELECAO_FASES,
     TELA_JOGO
 } Tela;
 
