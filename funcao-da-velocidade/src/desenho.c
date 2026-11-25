@@ -47,18 +47,18 @@ static void desenhar_vitoria(const Jogo *jogo, ALLEGRO_FONT *fonte)
 
     al_draw_filled_rectangle(150, 190, 670, 300, fundo);
     al_draw_rectangle(150, 190, 670, 300, verde, 4);
-    al_draw_text(fonte, verde, LARGURA / 2, 210, ALLEGRO_ALIGN_CENTER,
+    al_draw_text(fonte, verde, LARGURA / 2, 210, ALLEGRO_ALIGN_CENTRE,
         "VITORIA!");
 
     if (jogo_tem_proxima_fase(jogo)) {
-        al_draw_textf(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTER,
+        al_draw_textf(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTRE,
             "Voce passou da fase %d!", jogo->fase + 1);
-        al_draw_textf(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTER,
+        al_draw_textf(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTRE,
             "Aperte ENTER para ir para a fase %d.", jogo->fase + 2);
     } else {
-        al_draw_text(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTER,
+        al_draw_text(fonte, branco, LARGURA / 2, 245, ALLEGRO_ALIGN_CENTRE,
             "Voce completou todas as fases!");
-        al_draw_text(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTER,
+        al_draw_text(fonte, branco, LARGURA / 2, 270, ALLEGRO_ALIGN_CENTRE,
             "Digite outra funcao e aperte ENTER para jogar novamente.");
     }
 }
@@ -76,7 +76,7 @@ static void desenhar_botao(ALLEGRO_FONT *fonte, int x1, int x2,
     al_draw_rounded_rectangle((float)x1, (float)y1, (float)x2,
         (float)y2, 8, 8, borda, 1);
     al_draw_text(fonte, al_map_rgb(255, 255, 255),
-        (x1 + x2) / 2, y1 + 5, ALLEGRO_ALIGN_CENTER, rotulo);
+        (x1 + x2) / 2, y1 + 5, ALLEGRO_ALIGN_CENTRE, rotulo);
 }
 
 int desenho_identificar_botao(int x, int y, const Jogo *jogo)
@@ -106,7 +106,7 @@ static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
     al_draw_filled_rectangle(PISTA_X1, PISTA_Y1, PISTA_X1 + 90, PISTA_Y1 + altura + 10,
         al_map_rgba(0, 0, 0, 180));
     al_draw_textf(fonte, al_map_rgb(255, 255, 255), PISTA_X1 + 45, PISTA_Y1 + 5,
-        ALLEGRO_ALIGN_CENTER, "FASE %d", jogo->fase + 1);
+        ALLEGRO_ALIGN_CENTRE, "FASE %d", jogo->fase + 1);
 }
 
 static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
@@ -160,9 +160,9 @@ static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte
     const int h = 255;
     const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA" };
     const char *descricoes[] = {
-        "Comece dominando o caminho",
-        "Encare uma estrada inclinada",
-        "Atravesse uma curva em U"
+        "Domine o caminho reto",
+        "Suba mantendo o controle",
+        "Supere a curva em U"
     };
     ALLEGRO_BITMAP *imagem = fases_imagem(indice);
     ALLEGRO_COLOR painel = indice == fase_atual
@@ -195,7 +195,7 @@ static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte
     al_draw_filled_rounded_rectangle(x + 15, y + 222, x + w - 15,
         y + 246, 7, 7, botao);
     al_draw_text(fonte, al_map_rgb(255, 255, 255), x + w / 2, y + 226,
-        ALLEGRO_ALIGN_CENTER, indice == fase_atual ? "JOGAR NOVAMENTE" : "ESCOLHER FASE");
+        ALLEGRO_ALIGN_CENTRE, indice == fase_atual ? "JOGAR NOVAMENTE" : "ESCOLHER FASE");
 }
 
 int desenho_identificar_fase(int x, int y)
@@ -218,9 +218,9 @@ void desenho_tela_fases(int fase_atual, ALLEGRO_FONT *fonte)
     al_clear_to_color(al_map_rgb(14, 20, 34));
     al_draw_filled_rectangle(0, 0, LARGURA, 145, al_map_rgb(22, 34, 54));
     al_draw_text(fonte, al_map_rgb(100, 220, 185), LARGURA / 2, 48,
-        ALLEGRO_ALIGN_CENTER, "ESCOLHA SUA PROXIMA CORRIDA");
+        ALLEGRO_ALIGN_CENTRE, "ESCOLHA SUA PROXIMA CORRIDA");
     al_draw_text(fonte, al_map_rgb(205, 215, 230), LARGURA / 2, 82,
-        ALLEGRO_ALIGN_CENTER, "Selecione uma pista para comecar a jogar");
+        ALLEGRO_ALIGN_CENTRE, "Selecione uma pista para comecar a jogar");
 
     for (int i = 0; i < fases_quantidade(); i++)
         desenhar_cartao_fase(i, fase_atual, fonte);
@@ -230,7 +230,7 @@ void desenho_tela_fases(int fase_atual, ALLEGRO_FONT *fonte)
     al_draw_rounded_rectangle(300, 485, 500, 535, 12, 12,
         al_map_rgb(135, 155, 185), 1);
     al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA / 2, 501,
-        ALLEGRO_ALIGN_CENTER, "VOLTAR AO MENU");
+        ALLEGRO_ALIGN_CENTRE, "VOLTAR AO MENU");
     al_flip_display();
 }
 
