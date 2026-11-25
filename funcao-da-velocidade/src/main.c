@@ -143,7 +143,24 @@ int main(void)
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
             if (tela_atual == TELA_INICIAL) {
                 if (menu_processar_evento(&menu, &evento)) {
-                    tela_atual = TELA_JOGO;
+                    tela_atual = TELA_SELECAO_FASES;
+                }
+                redesenhar = true;
+            }
+            else if (tela_atual == TELA_SELECAO_FASES) {
+                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN
+                    && evento.mouse.button == 1) {
+                    if (desenho_clicou_voltar_fases(evento.mouse.x, evento.mouse.y)) {
+                        tela_atual = TELA_INICIAL;
+                    } else {
+                        int fase = desenho_identificar_fase(evento.mouse.x, evento.mouse.y);
+                        if (fase >= 0) {
+                            jogo.fase = fase;
+                            jogo_reiniciar_fase(&jogo);
+                            al_ustr_truncate(texto, 0);
+                            tela_atual = TELA_JOGO;
+                        }
+                    }
                 }
                 redesenhar = true;
             }
@@ -157,6 +174,9 @@ int main(void)
                     jogo_iniciar(&jogo);
                     al_ustr_truncate(texto, 0);
                     tela_atual = TELA_INICIAL;
+                }
+                else if (botao == BOTAO_SELECIONAR_FASES) {
+                    tela_atual = TELA_SELECAO_FASES;
                 }
                 else if (botao == BOTAO_REINICIAR) {
                     jogo_reiniciar_fase(&jogo);
@@ -189,6 +209,9 @@ int main(void)
             redesenhar = false;
             if (tela_atual == TELA_INICIAL) {
                 menu_desenhar(&menu, fonte, LARGURA, ALTURA);
+            }
+            else if (tela_atual == TELA_SELECAO_FASES) {
+                desenho_tela_fases(jogo.fase, fonte);
             }
             else {
                 desenhar_tela(&jogo, texto, carro, fonte);
