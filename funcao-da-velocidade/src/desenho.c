@@ -63,36 +63,40 @@ static void desenhar_vitoria(const Jogo *jogo, ALLEGRO_FONT *fonte)
     }
 }
 
-static void desenhar_botao(ALLEGRO_FONT *fonte, int x1, int x2, const char *rotulo)
+static void desenhar_botao(ALLEGRO_FONT *fonte, int x1, int x2,
+    const char *rotulo, ALLEGRO_COLOR fundo)
 {
-    ALLEGRO_COLOR fundo = al_map_rgb(35, 90, 130);
-    ALLEGRO_COLOR borda = al_map_rgb(230, 240, 250);
-    int y1 = 5;
-    int y2 = 28;
-    al_draw_filled_rounded_rectangle((float)x1, (float)y1, (float)x2, (float)y2,
-        5, 5, fundo);
-    al_draw_rounded_rectangle((float)x1, (float)y1, (float)x2, (float)y2,
-        5, 5, borda, 1);
-    al_draw_text(fonte, borda, (x1 + x2) / 2, y1 + 4,
-        ALLEGRO_ALIGN_CENTER, rotulo);
+    ALLEGRO_COLOR borda = al_map_rgb(105, 190, 230);
+    int y1 = 7;
+    int y2 = 31;
+    al_draw_filled_rounded_rectangle((float)x1 + 2, (float)y1 + 2,
+        (float)x2 + 2, (float)y2 + 2, 8, 8, al_map_rgba(0, 0, 0, 90));
+    al_draw_filled_rounded_rectangle((float)x1, (float)y1, (float)x2,
+        (float)y2, 8, 8, fundo);
+    al_draw_rounded_rectangle((float)x1, (float)y1, (float)x2,
+        (float)y2, 8, 8, borda, 1);
+    al_draw_text(fonte, al_map_rgb(255, 255, 255),
+        (x1 + x2) / 2, y1 + 5, ALLEGRO_ALIGN_CENTER, rotulo);
 }
 
 int desenho_identificar_botao(int x, int y, const Jogo *jogo)
 {
-    if (y < 5 || y > 28) return 0;
-    if (x >= 600 && x <= 680) return BOTAO_MENU;
-    if (x >= 686 && x <= 790) return BOTAO_REINICIAR;
+    if (y < 7 || y > 31) return 0;
+    if (x >= 480 && x <= 565) return BOTAO_SELECIONAR_FASES;
+    if (x >= 575 && x <= 655) return BOTAO_MENU;
+    if (x >= 665 && x <= 790) return BOTAO_REINICIAR;
     if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo)
-        && x >= 470 && x <= 590) return BOTAO_PROXIMA_FASE;
+        && x >= 345 && x <= 465) return BOTAO_PROXIMA_FASE;
     return 0;
 }
 
 static void desenhar_botoes(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
     if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo))
-        desenhar_botao(fonte, 470, 590, "PROXIMA FASE");
-    desenhar_botao(fonte, 600, 680, "MENU");
-    desenhar_botao(fonte, 686, 790, "REINICIAR");
+        desenhar_botao(fonte, 345, 465, "PROXIMA", al_map_rgb(28, 145, 92));
+    desenhar_botao(fonte, 480, 565, "FASES", al_map_rgb(48, 105, 155));
+    desenhar_botao(fonte, 575, 655, "MENU", al_map_rgb(75, 80, 105));
+    desenhar_botao(fonte, 665, 790, "REINICIAR", al_map_rgb(145, 82, 55));
 }
 
 static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
@@ -146,6 +150,88 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
             "Saiu da pista em x = %.2f: f(x) = %.2f   (ENTER corre de novo)",
             jogo->x_saida, jogo->y_saida);
     }
+}
+
+static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte)
+{
+    const int x = 58 + indice * 230;
+    const int y = 190;
+    const int w = 214;
+    const int h = 255;
+    const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA" };
+    const char *descricoes[] = {
+        "Comece dominando o caminho",
+        "Encare uma estrada inclinada",
+        "Atravesse uma curva em U"
+    };
+    ALLEGRO_BITMAP *imagem = fases_imagem(indice);
+    ALLEGRO_COLOR painel = indice == fase_atual
+        ? al_map_rgb(34, 75, 83) : al_map_rgb(31, 42, 61);
+    ALLEGRO_COLOR destaque = indice == fase_atual
+        ? al_map_rgb(85, 220, 170) : al_map_rgb(76, 145, 190);
+
+    al_draw_filled_rounded_rectangle(x + 3, y + 5, x + w + 3, y + h + 5,
+        14, 14, al_map_rgba(0, 0, 0, 110));
+    al_draw_filled_rounded_rectangle(x, y, x + w, y + h, 14, 14, painel);
+    al_draw_rounded_rectangle(x, y, x + w, y + h, 14, 14, destaque, 2);
+
+    if (imagem) {
+        al_draw_filled_rounded_rectangle(x + 10, y + 10, x + w - 10,
+            y + 142, 9, 9, al_map_rgb(15, 22, 32));
+        al_draw_scaled_bitmap(imagem, 0, 0,
+            (float)al_get_bitmap_width(imagem), (float)al_get_bitmap_height(imagem),
+            x + 10, y + 10, w - 20, 132, 0);
+    }
+
+    al_draw_textf(fonte, al_map_rgb(110, 205, 245), x + 15, y + 155,
+        ALLEGRO_ALIGN_LEFT, "FASE %d", indice + 1);
+    al_draw_text(fonte, al_map_rgb(255, 255, 255), x + 15, y + 180,
+        ALLEGRO_ALIGN_LEFT, nomes[indice]);
+    al_draw_text(fonte, al_map_rgb(185, 198, 215), x + 15, y + 207,
+        ALLEGRO_ALIGN_LEFT, descricoes[indice]);
+
+    ALLEGRO_COLOR botao = indice == fase_atual
+        ? al_map_rgb(40, 150, 112) : al_map_rgb(47, 105, 155);
+    al_draw_filled_rounded_rectangle(x + 15, y + 222, x + w - 15,
+        y + 246, 7, 7, botao);
+    al_draw_text(fonte, al_map_rgb(255, 255, 255), x + w / 2, y + 226,
+        ALLEGRO_ALIGN_CENTER, indice == fase_atual ? "JOGAR NOVAMENTE" : "ESCOLHER FASE");
+}
+
+int desenho_identificar_fase(int x, int y)
+{
+    if (y < 190 || y > 445) return -1;
+    for (int i = 0; i < fases_quantidade(); i++) {
+        int x1 = 58 + i * 230;
+        if (x >= x1 && x <= x1 + 214) return i;
+    }
+    return -1;
+}
+
+bool desenho_clicou_voltar_fases(int x, int y)
+{
+    return x >= 300 && x <= 500 && y >= 485 && y <= 535;
+}
+
+void desenho_tela_fases(int fase_atual, ALLEGRO_FONT *fonte)
+{
+    al_clear_to_color(al_map_rgb(14, 20, 34));
+    al_draw_filled_rectangle(0, 0, LARGURA, 145, al_map_rgb(22, 34, 54));
+    al_draw_text(fonte, al_map_rgb(100, 220, 185), LARGURA / 2, 48,
+        ALLEGRO_ALIGN_CENTER, "ESCOLHA SUA PROXIMA CORRIDA");
+    al_draw_text(fonte, al_map_rgb(205, 215, 230), LARGURA / 2, 82,
+        ALLEGRO_ALIGN_CENTER, "Selecione uma pista para comecar a jogar");
+
+    for (int i = 0; i < fases_quantidade(); i++)
+        desenhar_cartao_fase(i, fase_atual, fonte);
+
+    al_draw_filled_rounded_rectangle(300, 485, 500, 535, 12, 12,
+        al_map_rgb(65, 73, 96));
+    al_draw_rounded_rectangle(300, 485, 500, 535, 12, 12,
+        al_map_rgb(135, 155, 185), 1);
+    al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA / 2, 501,
+        ALLEGRO_ALIGN_CENTER, "VOLTAR AO MENU");
+    al_flip_display();
 }
 
 void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
