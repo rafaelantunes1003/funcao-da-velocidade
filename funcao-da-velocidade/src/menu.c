@@ -54,9 +54,9 @@ void menu_desenhar(const Menu* m, ALLEGRO_FONT* fonte, int largura_tela, int alt
     al_draw_filled_rectangle(0, 0, largura_tela, 125,
         al_map_rgba(8, 16, 30, 145));
     al_draw_text(fonte, al_map_rgb(245, 250, 255), largura_tela / 2, 38,
-        ALLEGRO_ALIGN_CENTER, "FUNCAO DA VELOCIDADE");
+        ALLEGRO_ALIGN_CENTRE, "FUNCAO DA VELOCIDADE");
     al_draw_text(fonte, al_map_rgb(190, 220, 235), largura_tela / 2, 75,
-        ALLEGRO_ALIGN_CENTER, "Trace a funcao. Encontre o caminho. Vença o desafio!");
+        ALLEGRO_ALIGN_CENTRE, "Trace a funcao. Encontre o caminho. Venca o desafio!");
 
     ALLEGRO_COLOR cor_fundo = m->mouse_sobre_botao
         ? al_map_rgb(55, 205, 145) : al_map_rgb(30, 145, 110);
@@ -71,7 +71,7 @@ void menu_desenhar(const Menu* m, ALLEGRO_FONT* fonte, int largura_tela, int alt
 
     int texto_x = (BTN_X1 + BTN_X2) / 2;
     int texto_y = (BTN_Y1 + BTN_Y2 - al_get_font_line_height(fonte)) / 2;
-    al_draw_text(fonte, cor_borda, texto_x, texto_y, ALLEGRO_ALIGN_CENTER,
+    al_draw_text(fonte, cor_borda, texto_x, texto_y, ALLEGRO_ALIGN_CENTRE,
         "ESCOLHER FASE");
     al_flip_display();
 }
