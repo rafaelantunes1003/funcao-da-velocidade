@@ -50,13 +50,8 @@ void menu_desenhar(const Menu* m, ALLEGRO_FONT* fonte, int largura_tela, int alt
         0
     );
 
-    /* Camada escura discreta para destacar o titulo e a acao principal. */
-    al_draw_filled_rectangle(0, 0, largura_tela, 125,
-        al_map_rgba(8, 16, 30, 145));
-    al_draw_text(fonte, al_map_rgb(245, 250, 255), largura_tela / 2, 38,
-        ALLEGRO_ALIGN_CENTRE, "FUNCAO DA VELOCIDADE");
-    al_draw_text(fonte, al_map_rgb(190, 220, 235), largura_tela / 2, 75,
-        ALLEGRO_ALIGN_CENTRE, "Trace a funcao. Encontre o caminho. Venca o desafio!");
+    /* A arte da capa já contém o logotipo e o slogan.
+       Não desenhar textos por cima para manter a identidade visual legível. */
 
     ALLEGRO_COLOR cor_fundo = m->mouse_sobre_botao
         ? al_map_rgb(55, 205, 145) : al_map_rgb(30, 145, 110);
