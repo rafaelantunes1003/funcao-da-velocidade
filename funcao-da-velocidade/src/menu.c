@@ -1,10 +1,10 @@
 #include <allegro5/allegro_primitives.h>
 #include "menu.h"
 
-#define BTN_X1 300
-#define BTN_Y1 420
-#define BTN_X2 500
-#define BTN_Y2 490
+#define BTN_X1 285
+#define BTN_Y1 425
+#define BTN_X2 515
+#define BTN_Y2 492
 
 static bool dentro_do_botao(int x, int y)
 {
@@ -50,16 +50,29 @@ void menu_desenhar(const Menu* m, ALLEGRO_FONT* fonte, int largura_tela, int alt
         0
     );
 
-    ALLEGRO_COLOR cor_fundo = m->mouse_sobre_botao ? al_map_rgb(80, 200, 120) : al_map_rgb(45, 160, 85);
-    ALLEGRO_COLOR cor_borda = al_map_rgb(255, 255, 255);
+    /* Camada escura discreta para destacar o titulo e a acao principal. */
+    al_draw_filled_rectangle(0, 0, largura_tela, 125,
+        al_map_rgba(8, 16, 30, 145));
+    al_draw_text(fonte, al_map_rgb(245, 250, 255), largura_tela / 2, 38,
+        ALLEGRO_ALIGN_CENTER, "FUNCAO DA VELOCIDADE");
+    al_draw_text(fonte, al_map_rgb(190, 220, 235), largura_tela / 2, 75,
+        ALLEGRO_ALIGN_CENTER, "Trace a funcao. Encontre o caminho. Vença o desafio!");
 
-    al_draw_filled_rounded_rectangle(BTN_X1, BTN_Y1, BTN_X2, BTN_Y2, 10, 10, cor_fundo);
-    al_draw_rounded_rectangle(BTN_X1, BTN_Y1, BTN_X2, BTN_Y2, 10, 10, cor_borda, 2);
+    ALLEGRO_COLOR cor_fundo = m->mouse_sobre_botao
+        ? al_map_rgb(55, 205, 145) : al_map_rgb(30, 145, 110);
+    ALLEGRO_COLOR cor_borda = al_map_rgb(220, 255, 245);
+
+    al_draw_filled_rounded_rectangle(BTN_X1 + 3, BTN_Y1 + 5,
+        BTN_X2 + 3, BTN_Y2 + 5, 16, 16, al_map_rgba(0, 0, 0, 125));
+    al_draw_filled_rounded_rectangle(BTN_X1, BTN_Y1, BTN_X2, BTN_Y2,
+        16, 16, cor_fundo);
+    al_draw_rounded_rectangle(BTN_X1, BTN_Y1, BTN_X2, BTN_Y2,
+        16, 16, cor_borda, 2);
 
     int texto_x = (BTN_X1 + BTN_X2) / 2;
     int texto_y = (BTN_Y1 + BTN_Y2 - al_get_font_line_height(fonte)) / 2;
-    al_draw_text(fonte, cor_borda, texto_x, texto_y, ALLEGRO_ALIGN_CENTRE, "PLAY");
-
+    al_draw_text(fonte, cor_borda, texto_x, texto_y, ALLEGRO_ALIGN_CENTER,
+        "ESCOLHER FASE");
     al_flip_display();
 }
 
