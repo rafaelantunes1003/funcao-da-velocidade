@@ -99,25 +99,36 @@ static void desenhar_botoes(const Jogo *jogo, ALLEGRO_FONT *fonte)
     desenhar_botao(fonte, 665, 790, "REINICIAR", al_map_rgb(145, 82, 55));
 }
 
-static void desenhar_coordenadas(const Jogo *jogo, ALLEGRO_FONT *fonte)
+static void desenhar_eixos(ALLEGRO_FONT *fonte, int indice_fase)
 {
-    const int largura = 166;
-    const int altura = al_get_font_line_height(fonte) + 12;
-    const int x2 = PISTA_X2 - 8;
-    const int x1 = x2 - largura;
-    const int y1 = PISTA_Y1 + 5;
-    const int y2 = y1 + altura;
-    ALLEGRO_COLOR texto = al_map_rgb(255, 255, 255);
-    ALLEGRO_COLOR destaque = al_map_rgb(105, 220, 190);
+    double y_min = indice_fase == 1 ? FASE2_Y_MIN : Y_MIN;
+    double y_max = indice_fase == 1 ? FASE2_Y_MAX : Y_MAX;
+    ALLEGRO_COLOR cor_eixo = al_map_rgb(235, 240, 245);
+    ALLEGRO_COLOR cor_texto = al_map_rgb(255, 255, 255);
+    ALLEGRO_COLOR cor_grade = al_map_rgba(255, 255, 255, 95);
+    const int quantidade_marcas = 5;
 
-    al_draw_filled_rounded_rectangle((float)x1, (float)y1, (float)x2,
-        (float)y2, 7, 7, al_map_rgba(0, 0, 0, 190));
-    al_draw_rounded_rectangle((float)x1, (float)y1, (float)x2,
-        (float)y2, 7, 7, al_map_rgb(90, 155, 175), 1);
-    al_draw_textf(fonte, destaque, x1 + 9, y1 + 6, ALLEGRO_ALIGN_LEFT,
-        "X: %.2f", jogo->x);
-    al_draw_textf(fonte, texto, x1 + 87, y1 + 6, ALLEGRO_ALIGN_LEFT,
-        "Y: %.2f", jogo->y);
+    /* Eixo Y e valores na lateral esquerda. */
+    al_draw_line(PISTA_X1, PISTA_Y1, PISTA_X1, PISTA_Y2, cor_eixo, 2);
+    for (int i = 0; i <= quantidade_marcas; i++) {
+        double valor = y_min + (y_max - y_min) * i / quantidade_marcas;
+        float py = PISTA_Y2 - (float)i * (PISTA_Y2 - PISTA_Y1) / quantidade_marcas;
+        al_draw_line(PISTA_X1 - 4, py, PISTA_X1 + 4, py, cor_eixo, 1);
+        al_draw_textf(fonte, cor_texto, PISTA_X1 - 8,
+            py - al_get_font_line_height(fonte) / 2, ALLEGRO_ALIGN_RIGHT, "%.1f", valor);
+    }
+    al_draw_text(fonte, cor_texto, 8, PISTA_Y1 - 2, ALLEGRO_ALIGN_LEFT, "Y");
+
+    /* Eixo X e valores abaixo da pista. */
+    al_draw_line(PISTA_X1, PISTA_Y2, PISTA_X2, PISTA_Y2, cor_eixo, 2);
+    for (int i = 0; i <= 10; i += 2) {
+        float px = PISTA_X1 + (float)i * (PISTA_X2 - PISTA_X1) / 10.0f;
+        al_draw_line(px, PISTA_Y2 - 4, px, PISTA_Y2 + 4, cor_eixo, 1);
+        al_draw_line(px, PISTA_Y1, px, PISTA_Y2, cor_grade, 1);
+        al_draw_textf(fonte, cor_texto, px, PISTA_Y2 + 5, ALLEGRO_ALIGN_CENTRE, "%d", i);
+    }
+    al_draw_text(fonte, cor_texto, PISTA_X2 - 5, PISTA_Y2 + 5,
+        ALLEGRO_ALIGN_RIGHT, "X");
 }
 
 static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
@@ -269,11 +280,11 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
             (float)al_get_bitmap_width(pista), (float)al_get_bitmap_height(pista),
             PISTA_X1, PISTA_Y1, PISTA_X2 - PISTA_X1, PISTA_Y2 - PISTA_Y1, 0);
     }
+    desenhar_eixos(fonte, jogo->fase);
     if (jogo->funcao) desenhar_funcao(jogo->funcao, al_map_rgb(255, 200, 0), jogo->fase);
     obstaculos_desenhar(fase->obstaculos, fase->num_obstaculos, jogo->fase);
     desenhar_carro(jogo, carro);
     desenhar_numero_da_fase(jogo, fonte);
-    desenhar_coordenadas(jogo, fonte);
     desenhar_botoes(jogo, fonte);
     if (jogo->estado == CHEGOU) desenhar_vitoria(jogo, fonte);
     desenhar_mensagem(jogo, fonte);
