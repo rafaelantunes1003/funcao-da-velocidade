@@ -99,6 +99,27 @@ static void desenhar_botoes(const Jogo *jogo, ALLEGRO_FONT *fonte)
     desenhar_botao(fonte, 665, 790, "REINICIAR", al_map_rgb(145, 82, 55));
 }
 
+static void desenhar_coordenadas(const Jogo *jogo, ALLEGRO_FONT *fonte)
+{
+    const int largura = 166;
+    const int altura = al_get_font_line_height(fonte) + 12;
+    const int x2 = PISTA_X2 - 8;
+    const int x1 = x2 - largura;
+    const int y1 = PISTA_Y1 + 5;
+    const int y2 = y1 + altura;
+    ALLEGRO_COLOR texto = al_map_rgb(255, 255, 255);
+    ALLEGRO_COLOR destaque = al_map_rgb(105, 220, 190);
+
+    al_draw_filled_rounded_rectangle((float)x1, (float)y1, (float)x2,
+        (float)y2, 7, 7, al_map_rgba(0, 0, 0, 190));
+    al_draw_rounded_rectangle((float)x1, (float)y1, (float)x2,
+        (float)y2, 7, 7, al_map_rgb(90, 155, 175), 1);
+    al_draw_textf(fonte, destaque, x1 + 9, y1 + 6, ALLEGRO_ALIGN_LEFT,
+        "X: %.2f", jogo->x);
+    al_draw_textf(fonte, texto, x1 + 87, y1 + 6, ALLEGRO_ALIGN_LEFT,
+        "Y: %.2f", jogo->y);
+}
+
 static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
     int altura = al_get_font_line_height(fonte);
@@ -252,6 +273,7 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
     obstaculos_desenhar(fase->obstaculos, fase->num_obstaculos, jogo->fase);
     desenhar_carro(jogo, carro);
     desenhar_numero_da_fase(jogo, fonte);
+    desenhar_coordenadas(jogo, fonte);
     desenhar_botoes(jogo, fonte);
     if (jogo->estado == CHEGOU) desenhar_vitoria(jogo, fonte);
     desenhar_mensagem(jogo, fonte);
