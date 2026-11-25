@@ -155,13 +155,13 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
 static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte)
 {
     const int x = 58 + indice * 230;
-    const int y = 190;
+    const int y = 165;
     const int w = 214;
-    const int h = 255;
+    const int h = 300;
     const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA" };
     const char *descricoes[] = {
-        "Domine o caminho reto",
-        "Suba mantendo o controle",
+        "Domine a reta",
+        "Encare a subida",
         "Supere a curva em U"
     };
     ALLEGRO_BITMAP *imagem = fases_imagem(indice);
@@ -170,37 +170,39 @@ static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte
     ALLEGRO_COLOR destaque = indice == fase_atual
         ? al_map_rgb(85, 220, 170) : al_map_rgb(76, 145, 190);
 
-    al_draw_filled_rounded_rectangle(x + 3, y + 5, x + w + 3, y + h + 5,
-        14, 14, al_map_rgba(0, 0, 0, 110));
-    al_draw_filled_rounded_rectangle(x, y, x + w, y + h, 14, 14, painel);
-    al_draw_rounded_rectangle(x, y, x + w, y + h, 14, 14, destaque, 2);
+    al_draw_filled_rounded_rectangle(x + 3, y + 6, x + w + 3, y + h + 6,
+        16, 16, al_map_rgba(0, 0, 0, 125));
+    al_draw_filled_rounded_rectangle(x, y, x + w, y + h, 16, 16, painel);
+    al_draw_rounded_rectangle(x, y, x + w, y + h, 16, 16, destaque, 2);
 
     if (imagem) {
         al_draw_filled_rounded_rectangle(x + 10, y + 10, x + w - 10,
-            y + 142, 9, 9, al_map_rgb(15, 22, 32));
+            y + 132, 9, 9, al_map_rgb(15, 22, 32));
         al_draw_scaled_bitmap(imagem, 0, 0,
             (float)al_get_bitmap_width(imagem), (float)al_get_bitmap_height(imagem),
-            x + 10, y + 10, w - 20, 132, 0);
+            x + 10, y + 10, w - 20, 122, 0);
     }
 
-    al_draw_textf(fonte, al_map_rgb(110, 205, 245), x + 15, y + 155,
+    al_draw_textf(fonte, al_map_rgb(110, 205, 245), x + 15, y + 145,
         ALLEGRO_ALIGN_LEFT, "FASE %d", indice + 1);
-    al_draw_text(fonte, al_map_rgb(255, 255, 255), x + 15, y + 180,
+    al_draw_text(fonte, al_map_rgb(255, 255, 255), x + 15, y + 171,
         ALLEGRO_ALIGN_LEFT, nomes[indice]);
-    al_draw_text(fonte, al_map_rgb(185, 198, 215), x + 15, y + 207,
+    al_draw_text(fonte, al_map_rgb(185, 198, 215), x + 15, y + 202,
         ALLEGRO_ALIGN_LEFT, descricoes[indice]);
 
     ALLEGRO_COLOR botao = indice == fase_atual
-        ? al_map_rgb(40, 150, 112) : al_map_rgb(47, 105, 155);
-    al_draw_filled_rounded_rectangle(x + 15, y + 222, x + w - 15,
-        y + 246, 7, 7, botao);
-    al_draw_text(fonte, al_map_rgb(255, 255, 255), x + w / 2, y + 226,
-        ALLEGRO_ALIGN_CENTRE, indice == fase_atual ? "JOGAR NOVAMENTE" : "ESCOLHER FASE");
+        ? al_map_rgb(35, 165, 120) : al_map_rgb(47, 115, 170);
+    al_draw_filled_rounded_rectangle(x + 15, y + 244, x + w - 15,
+        y + 280, 9, 9, botao);
+    al_draw_rounded_rectangle(x + 15, y + 244, x + w - 15,
+        y + 280, 9, 9, destaque, 1);
+    al_draw_text(fonte, al_map_rgb(255, 255, 255), x + w / 2, y + 253,
+        ALLEGRO_ALIGN_CENTRE, "JOGAR FASE");
 }
 
 int desenho_identificar_fase(int x, int y)
 {
-    if (y < 190 || y > 445) return -1;
+    if (y < 165 || y > 465) return -1;
     for (int i = 0; i < fases_quantidade(); i++) {
         int x1 = 58 + i * 230;
         if (x >= x1 && x <= x1 + 214) return i;
@@ -210,26 +212,26 @@ int desenho_identificar_fase(int x, int y)
 
 bool desenho_clicou_voltar_fases(int x, int y)
 {
-    return x >= 300 && x <= 500 && y >= 485 && y <= 535;
+    return x >= 300 && x <= 500 && y >= 500 && y <= 550;
 }
 
 void desenho_tela_fases(int fase_atual, ALLEGRO_FONT *fonte)
 {
     al_clear_to_color(al_map_rgb(14, 20, 34));
     al_draw_filled_rectangle(0, 0, LARGURA, 145, al_map_rgb(22, 34, 54));
-    al_draw_text(fonte, al_map_rgb(100, 220, 185), LARGURA / 2, 48,
+    al_draw_text(fonte, al_map_rgb(100, 220, 185), LARGURA / 2, 38,
         ALLEGRO_ALIGN_CENTRE, "ESCOLHA SUA PROXIMA CORRIDA");
-    al_draw_text(fonte, al_map_rgb(205, 215, 230), LARGURA / 2, 82,
+    al_draw_text(fonte, al_map_rgb(205, 215, 230), LARGURA / 2, 72,
         ALLEGRO_ALIGN_CENTRE, "Selecione uma pista para comecar a jogar");
 
     for (int i = 0; i < fases_quantidade(); i++)
         desenhar_cartao_fase(i, fase_atual, fonte);
 
-    al_draw_filled_rounded_rectangle(300, 485, 500, 535, 12, 12,
+    al_draw_filled_rounded_rectangle(300, 500, 500, 550, 12, 12,
         al_map_rgb(65, 73, 96));
-    al_draw_rounded_rectangle(300, 485, 500, 535, 12, 12,
+    al_draw_rounded_rectangle(300, 500, 500, 550, 12, 12,
         al_map_rgb(135, 155, 185), 1);
-    al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA / 2, 501,
+    al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA / 2, 516,
         ALLEGRO_ALIGN_CENTRE, "VOLTAR AO MENU");
     al_flip_display();
 }
