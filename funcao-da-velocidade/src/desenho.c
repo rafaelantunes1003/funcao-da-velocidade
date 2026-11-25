@@ -186,15 +186,16 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
 
 static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte)
 {
-    const int x = 58 + indice * 230;
+    const int x = 30 + indice * 190;
     const int y = 165;
-    const int w = 214;
+    const int w = 170;
     const int h = 300;
-    const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA" };
+    const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA", "A SENOIDE" };
     const char *descricoes[] = {
         "Domine a reta",
         "Encare a subida",
-        "Supere a curva em U"
+        "Curva em U",
+        "Siga a onda do seno"
     };
     ALLEGRO_BITMAP *imagem = fases_imagem(indice);
     ALLEGRO_COLOR painel = indice == fase_atual
@@ -236,8 +237,8 @@ int desenho_identificar_fase(int x, int y)
 {
     if (y < 165 || y > 465) return -1;
     for (int i = 0; i < fases_quantidade(); i++) {
-        int x1 = 58 + i * 230;
-        if (x >= x1 && x <= x1 + 214) return i;
+        int x1 = 30 + i * 190;
+        if (x >= x1 && x <= x1 + 170) return i;
     }
     return -1;
 }
