@@ -14,6 +14,33 @@
 #include "obstaculos.h"
 #include "fases.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
+/* Se a pasta images não estiver na pasta atual (por exemplo, quando o jogo
+ * é aberto por um atalho), procura ao lado do próprio executável. */
+static void achar_pasta_images(void)
+{
+    if (al_filename_exists("images/capa.png")) {
+        return;
+    }
+    ALLEGRO_PATH* pasta = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+    if (pasta) {
+        al_change_directory(al_path_cstr(pasta, ALLEGRO_NATIVE_PATH_SEP));
+        al_destroy_path(pasta);
+    }
+}
+
+/* Mostra o erro numa janela, porque o executável pronto não abre o console */
+static void mostrar_erro(const char* mensagem)
+{
+    fprintf(stderr, "%s\n", mensagem);
+#ifdef _WIN32
+    MessageBoxA(NULL, mensagem, "Funcao da Velocidade", MB_OK | MB_ICONERROR);
+#endif
+}
+
 static bool iniciar_allegro(void)
 {
     if (!al_init()) {
@@ -72,6 +99,7 @@ int main(void)
     if (!iniciar_allegro()) {
         return -1;
     }
+    achar_pasta_images();
 
     ALLEGRO_DISPLAY* janela = al_create_display(LARGURA, ALTURA);
     if (!janela) {
@@ -82,7 +110,8 @@ int main(void)
 
     Menu menu;
     if (!menu_inicializar(&menu, "images/capa.png")) {
-        fprintf(stderr, "Falha ao carregar images/capa.png.\n");
+        mostrar_erro("Nao encontrei a pasta images.\n"
+                     "Deixe o executavel do jogo na mesma pasta da pasta images e das DLLs.");
         al_destroy_display(janela);
         return -1;
     }
