@@ -5,11 +5,11 @@ Jogo em C com Allegro 5: o jogador digita uma funcao de x (ex.: `sen(x)`, `x/2`,
 ## Jogar sem instalar nada (Windows 10 ou 11)
 
 1. Baixe o repositorio: botao verde **Code > Download ZIP** e extraia o ZIP.
-2. Abra a pasta `Jogo` e de dois cliques em **Funcao da Velocidade.exe** (o icone do carrinho vermelho).
+2. De dois cliques em **jogo.exe** (o icone do carrinho vermelho), na pasta principal.
 
 Se aparecer "O Windows protegeu o computador", clique em **Mais informacoes > Executar assim mesmo**. O aviso aparece porque o executavel nao tem assinatura digital.
 
-Nao tire o executavel de dentro da pasta `Jogo`: ele precisa das DLLs e da pasta `images` ao lado dele.
+O `jogo.exe` so abre o jogo que esta na pasta `Jogo` (junto com as DLLs e a pasta `images`), entao deixe os dois juntos.
 
 ## Como jogar
 
@@ -76,7 +76,7 @@ gcc -Wall src/*.c -o movimento.exe $(pkg-config --cflags --libs allegro-5 allegr
 
 ## Atualizar a pasta Jogo
 
-A pasta `Jogo` nao se atualiza sozinha. Depois de mudar o codigo ou as imagens, gere ela de novo (precisa do MSYS2 UCRT64 com gcc, pkgconf e allegro) e envie junto no commit:
+A pasta `Jogo` nao se atualiza sozinha. Depois de mudar o codigo ou as imagens, gere ela de novo junto com o `jogo.exe` (precisa do MSYS2 UCRT64 com gcc, pkgconf e allegro) e envie junto no commit:
 
 ```powershell
 .\gerar-jogo.ps1                 # MSYS2 em C:\msys64
@@ -88,12 +88,14 @@ O script compila o jogo sem a janela do console, com o icone de `funcao-da-veloc
 ## Organizacao
 
 ```
-Jogo/                  jogo pronto para abrir (exe + DLLs + images)
+jogo.exe               abre o jogo que esta na pasta Jogo
+Jogo/                  jogo pronto (exe + DLLs + images)
 funcao-da-velocidade/
   src/                 codigo-fonte em C
   testes/              testes do interpretador
   images/              imagens do jogo
   icone/               icone do executavel
+  lancador/            codigo do jogo.exe
 funcao-da-velocidade.slnx
 gerar-jogo.ps1         script que monta a pasta Jogo (MSYS2)
 empacotar-windows.ps1  script para montar a distribuicao Windows x64 (Visual Studio)

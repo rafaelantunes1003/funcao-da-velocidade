@@ -44,7 +44,8 @@ x86/
 *.bak
 ~$*
 
-# Pasta Jogo: o executável pronto e as DLLs dele vão para o GitHub
-# (é gerada pelo gerar-jogo.ps1)
+# Pasta Jogo e jogo.exe da pasta principal vão para o GitHub
+# (são gerados pelo gerar-jogo.ps1)
+!/jogo.exe
 !Jogo/*.exe
 !Jogo/*.dll

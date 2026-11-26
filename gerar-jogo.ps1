@@ -1,4 +1,5 @@
-# Monta a pasta Jogo/ com o executavel pronto para jogar (exe + DLLs + images).
+# Monta a pasta Jogo/ com o executavel pronto para jogar (exe + DLLs + images)
+# e o jogo.exe da pasta principal, que so abre o jogo que esta em Jogo/.
 # Precisa do MSYS2 UCRT64 com gcc, pkgconf e allegro instalados.
 # Uso: .\gerar-jogo.ps1              (MSYS2 em C:\msys64)
 #      .\gerar-jogo.ps1 -Msys D:\msys64
@@ -11,6 +12,7 @@ $projeto = Join-Path $raiz "funcao-da-velocidade"
 $destino = Join-Path $raiz "Jogo"
 $bin     = Join-Path $Msys "ucrt64\bin"
 $exe     = Join-Path $destino "Funcao da Velocidade.exe"
+$atalho  = Join-Path $raiz "jogo.exe"
 
 if (-not (Test-Path (Join-Path $bin "gcc.exe"))) {
     throw "gcc nao encontrado em $bin. Instale o MSYS2 UCRT64 ou informe a pasta com -Msys."
@@ -32,6 +34,10 @@ try {
     # -mwindows: abre so a janela do jogo, sem o console preto atras
     & gcc -std=c11 -O2 -Wall -mwindows $fontes icone/icone.o -o $exe @flags -lm
     if ($LASTEXITCODE -ne 0) { throw "A compilacao falhou." }
+
+    # jogo.exe da pasta principal: -static para nao precisar de nenhuma DLL
+    & gcc -O2 -Wall -mwindows -municode -static lancador/lancador.c icone/icone.o -o $atalho
+    if ($LASTEXITCODE -ne 0) { throw "A compilacao do jogo.exe falhou." }
 }
 finally {
     Remove-Item icone/icone.o -ErrorAction SilentlyContinue
@@ -62,4 +68,4 @@ Copy-Item (Join-Path $projeto "images") (Join-Path $destino "images") -Recurse
 
 Write-Host ""
 Write-Host "Pronto: $destino"
-Write-Host "$($copiadas.Count) DLLs copiadas. Para jogar, abra 'Funcao da Velocidade.exe'."
+Write-Host "$($copiadas.Count) DLLs copiadas. Para jogar, abra o jogo.exe da pasta principal."
