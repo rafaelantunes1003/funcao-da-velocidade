@@ -1,6 +1,6 @@
 # funcao-da-velocidade
 
-Jogo em C com Allegro 5: o jogador digita uma funcao de x (ex.: `sen(x)`, `x/2`, `2sen(x)+1`) e o carro anda em cima do grafico dela. Para vencer, o carro precisa chegar a faixa quadriculada sem sair do asfalto e sem bater nos obstaculos.
+Jogo em C com Allegro 5: o jogador digita uma funcao de x (ex.: `x/2`, `2x+1`, `x^2-3`) e o carro anda em cima do grafico dela. Para vencer, o carro precisa chegar a faixa quadriculada sem sair do asfalto e sem bater nos obstaculos.
 
 ## Jogar sem instalar nada (Windows 10 ou 11)
 
@@ -13,18 +13,19 @@ O `jogo.exe` so abre o jogo que esta na pasta `Jogo` (junto com as DLLs e a past
 
 ## Como jogar
 
-1. Na tela inicial, clique em **PLAY**.
+1. Na tela inicial, clique em **ESCOLHER FASE** e escolha uma pista.
 2. Olhe o formato da estrada, digite uma funcao de x e aperte **ENTER**.
-3. Se bater ou sair da pista, corrija a funcao e aperte **ENTER** de novo.
-4. Ao vencer, aperte **ENTER** para ir para a proxima fase.
+3. Se bater ou sair da pista, corrija a funcao e aperte **ENTER** de novo. Se travar, clique em **DICA**.
+4. Ao vencer, aperte **ENTER** (ou **PROXIMA**) para ir para a proxima fase.
 
 ## Fases
 
-| Fase | Pista |
-|------|-------|
-| 1 | reta |
-| 2 | subida em linha reta |
-| 3 | parabola em forma de U |
+| Fase | Nome | Pista |
+|------|------|-------|
+| 1 | A reta | reta |
+| 2 | A subida | subida em linha reta |
+| 3 | A parabola | curva em forma de U |
+| 4 | O slalom | fileiras de cones para desviar |
 
 ## Compilar no Visual Studio (Windows)
 
@@ -52,7 +53,7 @@ Para desenvolvimento, tambem e possivel selecionar **Debug | x64**.
 Depois de restaurar os pacotes NuGet, abra o **Developer PowerShell for Visual Studio** na pasta raiz do repositorio e execute:
 
 ```powershell
-.\empacotar-windows.ps1
+.\scripts\empacotar-windows.ps1
 ```
 
 O script compila em **Release x64** e tenta montar a pasta `dist/windows-x64` com:
@@ -79,8 +80,8 @@ gcc -Wall src/*.c -o movimento.exe $(pkg-config --cflags --libs allegro-5 allegr
 A pasta `Jogo` nao se atualiza sozinha. Depois de mudar o codigo ou as imagens, gere ela de novo junto com o `jogo.exe` (precisa do MSYS2 UCRT64 com gcc, pkgconf e allegro) e envie junto no commit:
 
 ```powershell
-.\gerar-jogo.ps1                 # MSYS2 em C:\msys64
-.\gerar-jogo.ps1 -Msys D:\msys64 # MSYS2 em outra pasta
+.\scripts\gerar-jogo.ps1                 # MSYS2 em C:\msys64
+.\scripts\gerar-jogo.ps1 -Msys D:\msys64 # MSYS2 em outra pasta
 ```
 
 O script compila o jogo sem a janela do console, com o icone de `funcao-da-velocidade/icone`, e copia so as DLLs que o executavel usa, junto com a pasta `images`.
@@ -96,7 +97,15 @@ funcao-da-velocidade/
   images/              imagens do jogo
   icone/               icone do executavel
   lancador/            codigo do jogo.exe
+scripts/
+  gerar-jogo.ps1         monta a pasta Jogo e o jogo.exe (MSYS2)
+  empacotar-windows.ps1  monta a distribuicao Windows x64 (Visual Studio)
 funcao-da-velocidade.slnx
-gerar-jogo.ps1         script que monta a pasta Jogo (MSYS2)
-empacotar-windows.ps1  script para montar a distribuicao Windows x64 (Visual Studio)
 ```
+
+## Para o grupo: como manter o historico organizado
+
+- De `git pull` **antes** de comecar a mexer. Isso evita os commits "Merge branch 'main'...".
+- Um commit para cada mudanca, com uma mensagem curta em portugues dizendo o que mudou.
+- Nao repita a mesma mensagem em commits diferentes.
+- Nunca use `git push --force` no `main`: isso apaga o trabalho dos outros no GitHub.
