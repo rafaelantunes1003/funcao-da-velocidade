@@ -24,6 +24,7 @@ typedef struct {
     float angulo;
     const Obstaculo *obstaculo_colisao;
     bool mostrar_dica;        /* liga e desliga no botao DICA */
+    bool saiu_do_asfalto;     /* saiu em algum ponto (x_saida, y_saida), mas continua o trajeto */
 } Jogo;
 
 void jogo_iniciar(Jogo *jogo);

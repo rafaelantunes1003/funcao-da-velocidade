@@ -5,13 +5,22 @@
 #include "coordenadas.h"
 #include "fases.h"
 
-/* O carro precisa estar dentro da tela e em cima do asfalto da fase */
-static bool dentro_da_pista(const Jogo *jogo, double x, double y)
+/* O ponto existe e aparece na tela? (fora disso o carro precisa parar) */
+static bool dentro_da_tela(const Jogo *jogo, double y)
 {
     double minimo = jogo->fase == 1 ? FASE2_Y_MIN : Y_MIN;
     double maximo = jogo->fase == 1 ? FASE2_Y_MAX : Y_MAX;
-    return isfinite(y) && y >= minimo && y <= maximo
-        && fase_no_asfalto(fases_obter(jogo->fase), x, y);
+    return isfinite(y) && y >= minimo && y <= maximo;
+}
+
+/* Guarda o primeiro ponto em que o carro saiu do asfalto.
+ * O carro continua andando em cima do gráfico; só no fim conta como derrota. */
+static void marcar_saida_do_asfalto(Jogo *jogo, double x, double y)
+{
+    if (jogo->saiu_do_asfalto) return;
+    jogo->saiu_do_asfalto = true;
+    jogo->x_saida = x;
+    jogo->y_saida = y;
 }
 
 static float angulo_na_curva(const Expressao *funcao, double x, float angulo_atual, int indice_fase)
@@ -41,10 +50,10 @@ static void colocar_na_largada(Jogo *jogo)
     jogo->angulo = atan2f(dy, dx) + CARRO_DIREITA;
 }
 
+/* Para o carro: o gráfico saiu da tela ou a função não existe nesse x */
 static void sair_da_pista(Jogo *jogo, double x, double y)
 {
-    jogo->x_saida = x;
-    jogo->y_saida = y;
+    marcar_saida_do_asfalto(jogo, x, y);
     jogo->estado = SAIU;
 }
 
@@ -62,11 +71,13 @@ void jogo_iniciar(Jogo *jogo)
     jogo->angulo = CARRO_DIREITA;
     jogo->obstaculo_colisao = NULL;
     jogo->mostrar_dica = false;
+    jogo->saiu_do_asfalto = false;
 }
 
 void jogo_reiniciar_fase(Jogo *jogo)
 {
     jogo->mostrar_dica = false;
+    jogo->saiu_do_asfalto = false;
     expressao_liberar(jogo->funcao);
     jogo->funcao = NULL;
     jogo->erro[0] = '\0';
@@ -86,6 +97,7 @@ void jogo_largar(Jogo *jogo, const char *texto)
     jogo->passos = 0;
     colocar_na_largada(jogo);
     jogo->obstaculo_colisao = NULL;
+    jogo->saiu_do_asfalto = false;
 
     if (!jogo->funcao) {
         jogo->estado = PARADO;
@@ -93,12 +105,16 @@ void jogo_largar(Jogo *jogo, const char *texto)
     }
 
     double y_inicio = expressao_avaliar(jogo->funcao, jogo->x);
-    if (dentro_da_pista(jogo, jogo->x, y_inicio)) {
-        jogo->y = y_inicio;
-        jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo, jogo->fase);
-        jogo->estado = ANDANDO;
-    } else {
+    if (!dentro_da_tela(jogo, y_inicio)) {
         sair_da_pista(jogo, jogo->x, y_inicio);
+        return;
+    }
+
+    jogo->y = y_inicio;
+    jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo, jogo->fase);
+    jogo->estado = ANDANDO;
+    if (!fase_no_asfalto(fases_obter(jogo->fase), jogo->x, jogo->y)) {
+        marcar_saida_do_asfalto(jogo, jogo->x, jogo->y);
     }
 }
 
@@ -110,12 +126,15 @@ void jogo_atualizar(Jogo *jogo)
     if (novo_x > X_CHEGADA) novo_x = X_CHEGADA;
     double novo_y = expressao_avaliar(jogo->funcao, novo_x);
 
-    if (!dentro_da_pista(jogo, novo_x, novo_y)) {
+    if (!dentro_da_tela(jogo, novo_y)) {
         sair_da_pista(jogo, novo_x, novo_y);
         return;
     }
 
     const Fase *fase = fases_obter(jogo->fase);
+    if (!fase_no_asfalto(fase, novo_x, novo_y)) {
+        marcar_saida_do_asfalto(jogo, novo_x, novo_y);
+    }
     const Obstaculo *colisao = obstaculos_verificar_colisao(
         fase->obstaculos, fase->num_obstaculos, jogo->fase,
         jogo->x, jogo->y, novo_x, novo_y);
@@ -132,7 +151,8 @@ void jogo_atualizar(Jogo *jogo)
     jogo->y = novo_y;
     jogo->angulo = angulo_na_curva(jogo->funcao, jogo->x, jogo->angulo, jogo->fase);
     if (jogo->x >= X_CHEGADA) {
-        jogo->estado = CHEGOU;
+        /* Completou o trajeto: só vence se não saiu do asfalto no caminho */
+        jogo->estado = jogo->saiu_do_asfalto ? SAIU : CHEGOU;
     }
 }
 

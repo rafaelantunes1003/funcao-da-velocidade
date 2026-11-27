@@ -171,6 +171,10 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
         al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT, "Erro: %s", jogo->erro);
     } else if (jogo->estado == PARADO) {
         al_draw_text(fonte, cinza, x, y, ALLEGRO_ALIGN_LEFT, fases_obter(jogo->fase)->instrucao);
+    } else if (jogo->estado == ANDANDO && jogo->saiu_do_asfalto) {
+        al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT,
+            "x = %.2f    f(x) = %.2f    FORA DA PISTA desde x = %.2f",
+            jogo->x, jogo->y, jogo->x_saida);
     } else if (jogo->estado == ANDANDO) {
         al_draw_textf(fonte, branco, x, y, ALLEGRO_ALIGN_LEFT,
             "x = %.2f    f(x) = %.2f", jogo->x, jogo->y);
