@@ -1,0 +1,5 @@
+# Arquivos binarios: o Git nunca deve mexer no fim de linha deles
+*.png binary
+*.ico binary
+*.exe binary
+*.dll binary
