@@ -74,16 +74,18 @@ static const Obstaculo obstaculos_fase4[] = {
 #define QTD(v) ((int)(sizeof(v) / sizeof((v)[0])))
 
 static const Fase fases[] = {
-    { "images/pista1.png", centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1),
+    { "images/pista1.png", centro_reta,     centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1),
       "Digite uma funcao de x e aperte ENTER. Se precisar, clique em DICA.",
       "Dica: a funcao e uma constante." },
-    { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
+    { "images/pista2.png", centro_subida,   centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
       "Acompanhe a subida da estrada e mantenha o carro sobre o asfalto.",
       "Dica: f(x) = x + ?" },
-    { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
+    { "images/pista3.png", centro_parabola, centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
       "A estrada desce e sobe em forma de U, como uma parabola.",
       "Dica: f(x) = (x - ?) * (x - ?) / ? - 3" },
-    { "images/pista1.png", centro_seno, obstaculos_fase4, QTD(obstaculos_fase4),
+    /* A fase 4 usa a imagem reta da fase 1: o asfalto e o da estrada reta,
+       e a onda sen(x) e o caminho entre os cones. */
+    { "images/pista1.png", centro_seno,     centro_reta,     obstaculos_fase4, QTD(obstaculos_fase4),
       "Passe pelas aberturas entre os cones. Os angulos sao em radianos.",
       "Dica: e uma funcao trigonometrica." }
 };
@@ -130,5 +132,5 @@ ALLEGRO_BITMAP *fases_imagem(int indice)
 
 bool fase_no_asfalto(const Fase *fase, double x, double y)
 {
-    return fabs(y - fase->centro(x)) <= ASFALTO_MEIA_ALTURA;
+    return fabs(y - fase->asfalto(x)) <= ASFALTO_MEIA_ALTURA;
 }

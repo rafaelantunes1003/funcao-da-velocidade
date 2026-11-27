@@ -7,7 +7,10 @@
 
 typedef struct {
     const char *imagem;              /* fundo da pista */
-    double (*centro)(double x);      /* linha amarela do meio da pista */
+    double (*centro)(double x);      /* caminho certo (onde o carro larga) */
+    double (*asfalto)(double x);     /* meio da estrada desenhada na imagem; o carro
+                                        sai da pista se ficar a mais de
+                                        ASFALTO_MEIA_ALTURA dele */
     const Obstaculo *obstaculos;
     int num_obstaculos;
     const char *instrucao;           /* mensagem antes de largar */
