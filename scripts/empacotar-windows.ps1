@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 
-$repoRoot = $PSScriptRoot
+# O script fica em scripts/, entao a pasta principal e a de cima
+$repoRoot = Split-Path $PSScriptRoot -Parent
 $solution = Join-Path $repoRoot "funcao-da-velocidade.slnx"
 $projectDir = Join-Path $repoRoot "funcao-da-velocidade"
 $packagesDir = Join-Path $repoRoot "packages"

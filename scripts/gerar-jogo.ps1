@@ -1,13 +1,14 @@
 # Monta a pasta Jogo/ com o executavel pronto para jogar (exe + DLLs + images)
 # e o jogo.exe da pasta principal, que so abre o jogo que esta em Jogo/.
 # Precisa do MSYS2 UCRT64 com gcc, pkgconf e allegro instalados.
-# Uso: .\gerar-jogo.ps1              (MSYS2 em C:\msys64)
-#      .\gerar-jogo.ps1 -Msys D:\msys64
+# Uso (na pasta principal): .\scripts\gerar-jogo.ps1              (MSYS2 em C:\msys64)
+#                           .\scripts\gerar-jogo.ps1 -Msys D:\msys64
 param([string]$Msys = "C:\msys64")
 
 $ErrorActionPreference = "Stop"
 
-$raiz    = $PSScriptRoot
+# O script fica em scripts/, entao a pasta principal e a de cima
+$raiz    = Split-Path $PSScriptRoot -Parent
 $projeto = Join-Path $raiz "funcao-da-velocidade"
 $destino = Join-Path $raiz "Jogo"
 $bin     = Join-Path $Msys "ucrt64\bin"
