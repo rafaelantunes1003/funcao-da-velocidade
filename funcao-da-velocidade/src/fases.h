@@ -10,7 +10,8 @@ typedef struct {
     double (*centro)(double x);      /* linha amarela do meio da pista */
     const Obstaculo *obstaculos;
     int num_obstaculos;
-    const char *dica;                /* mensagem antes de largar */
+    const char *instrucao;           /* mensagem antes de largar */
+    const char *dica;                /* aparece ao clicar no botao DICA */
 } Fase;
 
 /* Carrega e libera as imagens das pistas. */

@@ -82,6 +82,7 @@ static void desenhar_botao(ALLEGRO_FONT *fonte, int x1, int x2,
 int desenho_identificar_botao(int x, int y, const Jogo *jogo)
 {
     if (y < 7 || y > 31) return 0;
+    if (x >= 250 && x <= 335) return BOTAO_DICA;
     if (x >= 480 && x <= 565) return BOTAO_SELECIONAR_FASES;
     if (x >= 575 && x <= 655) return BOTAO_MENU;
     if (x >= 665 && x <= 790) return BOTAO_REINICIAR;
@@ -92,6 +93,8 @@ int desenho_identificar_botao(int x, int y, const Jogo *jogo)
 
 static void desenhar_botoes(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
+    desenhar_botao(fonte, 250, 335, "DICA", jogo->mostrar_dica
+        ? al_map_rgb(190, 145, 20) : al_map_rgb(120, 95, 30));
     if (jogo->estado == CHEGOU && jogo_tem_proxima_fase(jogo))
         desenhar_botao(fonte, 345, 465, "PROXIMA", al_map_rgb(28, 145, 92));
     desenhar_botao(fonte, 480, 565, "FASES", al_map_rgb(48, 105, 155));
@@ -141,6 +144,20 @@ static void desenhar_numero_da_fase(const Jogo *jogo, ALLEGRO_FONT *fonte)
         ALLEGRO_ALIGN_CENTRE, "FASE %d", jogo->fase + 1);
 }
 
+/* Caixa com a dica da fase, em cima da pista (aparece pelo botao DICA) */
+static void desenhar_dica(const Jogo *jogo, ALLEGRO_FONT *fonte)
+{
+    ALLEGRO_COLOR amarelo = al_map_rgb(255, 215, 60);
+    int altura = al_get_font_line_height(fonte);
+
+    al_draw_filled_rounded_rectangle(200, PISTA_Y1 + 10, 620, PISTA_Y1 + altura + 26,
+        8, 8, al_map_rgba(0, 0, 0, 210));
+    al_draw_rounded_rectangle(200, PISTA_Y1 + 10, 620, PISTA_Y1 + altura + 26,
+        8, 8, amarelo, 2);
+    al_draw_text(fonte, amarelo, LARGURA / 2, PISTA_Y1 + 18, ALLEGRO_ALIGN_CENTRE,
+        fases_obter(jogo->fase)->dica);
+}
+
 static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
 {
     ALLEGRO_COLOR branco = al_map_rgb(255, 255, 255);
@@ -153,7 +170,7 @@ static void desenhar_mensagem(const Jogo *jogo, ALLEGRO_FONT *fonte)
     if (!jogo->funcao && jogo->erro[0] != '\0') {
         al_draw_textf(fonte, vermelho, x, y, ALLEGRO_ALIGN_LEFT, "Erro: %s", jogo->erro);
     } else if (jogo->estado == PARADO) {
-        al_draw_text(fonte, cinza, x, y, ALLEGRO_ALIGN_LEFT, fases_obter(jogo->fase)->dica);
+        al_draw_text(fonte, cinza, x, y, ALLEGRO_ALIGN_LEFT, fases_obter(jogo->fase)->instrucao);
     } else if (jogo->estado == ANDANDO) {
         al_draw_textf(fonte, branco, x, y, ALLEGRO_ALIGN_LEFT,
             "x = %.2f    f(x) = %.2f", jogo->x, jogo->y);
@@ -190,12 +207,12 @@ static void desenhar_cartao_fase(int indice, int fase_atual, ALLEGRO_FONT *fonte
     const int y = 165;
     const int w = 170;
     const int h = 300;
-    const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA", "A SENOIDE" };
+    const char *nomes[] = { "A RETA", "A SUBIDA", "A PARABOLA", "O SLALOM" };
     const char *descricoes[] = {
         "Domine a reta",
         "Encare a subida",
         "Curva em U",
-        "Siga a onda do seno"
+        "Desvie dos cones"
     };
     ALLEGRO_BITMAP *imagem = fases_imagem(indice);
     ALLEGRO_COLOR painel = indice == fase_atual
@@ -287,6 +304,7 @@ void desenhar_tela(const Jogo *jogo, const ALLEGRO_USTR *texto,
     desenhar_carro(jogo, carro);
     desenhar_numero_da_fase(jogo, fonte);
     desenhar_botoes(jogo, fonte);
+    if (jogo->mostrar_dica) desenhar_dica(jogo, fonte);
     if (jogo->estado == CHEGOU) desenhar_vitoria(jogo, fonte);
     desenhar_mensagem(jogo, fonte);
     campo_desenhar(texto, fonte);

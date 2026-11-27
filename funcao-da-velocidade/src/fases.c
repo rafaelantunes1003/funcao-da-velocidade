@@ -75,13 +75,17 @@ static const Obstaculo obstaculos_fase4[] = {
 
 static const Fase fases[] = {
     { "images/pista1.png", centro_reta,     obstaculos_fase1, QTD(obstaculos_fase1),
-      "Digite uma funcao de x e aperte ENTER. Exemplos: sen(x)   x/2   2sen(x)+1" },
+      "Digite uma funcao de x e aperte ENTER. Se precisar, clique em DICA.",
+      "Dica: a funcao e uma constante." },
     { "images/pista2.png", centro_subida,   obstaculos_fase2, QTD(obstaculos_fase2),
-      "Acompanhe a subida da estrada e mantenha o carro sobre o asfalto." },
+      "Acompanhe a subida da estrada e mantenha o carro sobre o asfalto.",
+      "Dica: f(x) = x + ?" },
     { "images/pista3.png", centro_parabola, obstaculos_fase3, QTD(obstaculos_fase3),
-      "A estrada desce e sobe em forma de U, como uma parabola." },
+      "A estrada desce e sobe em forma de U, como uma parabola.",
+      "Dica: f(x) = (x - ?) * (x - ?) / ? - 3" },
     { "images/pista1.png", centro_seno, obstaculos_fase4, QTD(obstaculos_fase4),
-      "Atravesse as fileiras de cones pelas aberturas que acompanham a onda: digite sen(x). O seno usa radianos." }
+      "Passe pelas aberturas entre os cones. Os angulos sao em radianos.",
+      "Dica: e uma funcao trigonometrica." }
 };
 
 #define NUM_FASES QTD(fases)

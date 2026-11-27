@@ -10,7 +10,8 @@ enum {
     BOTAO_MENU = 1,
     BOTAO_REINICIAR,
     BOTAO_PROXIMA_FASE,
-    BOTAO_SELECIONAR_FASES
+    BOTAO_SELECIONAR_FASES,
+    BOTAO_DICA
 };
 
 /* Retorna a acao do botao clicado ou zero quando nenhum foi clicado. */

@@ -23,6 +23,7 @@ typedef struct {
     double x_saida, y_saida;
     float angulo;
     const Obstaculo *obstaculo_colisao;
+    bool mostrar_dica;        /* liga e desliga no botao DICA */
 } Jogo;
 
 void jogo_iniciar(Jogo *jogo);

@@ -61,10 +61,12 @@ void jogo_iniciar(Jogo *jogo)
     jogo->y_saida = 0;
     jogo->angulo = CARRO_DIREITA;
     jogo->obstaculo_colisao = NULL;
+    jogo->mostrar_dica = false;
 }
 
 void jogo_reiniciar_fase(Jogo *jogo)
 {
+    jogo->mostrar_dica = false;
     expressao_liberar(jogo->funcao);
     jogo->funcao = NULL;
     jogo->erro[0] = '\0';

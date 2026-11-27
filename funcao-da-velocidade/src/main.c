@@ -211,6 +211,9 @@ int main(void)
                     jogo_reiniciar_fase(&jogo);
                     al_ustr_truncate(texto, 0);
                 }
+                else if (botao == BOTAO_DICA) {
+                    jogo.mostrar_dica = !jogo.mostrar_dica;
+                }
                 else if (botao == BOTAO_PROXIMA_FASE) {
                     jogo_proxima_fase(&jogo);
                     al_ustr_truncate(texto, 0);
