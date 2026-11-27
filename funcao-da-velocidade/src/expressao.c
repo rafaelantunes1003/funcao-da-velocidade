@@ -504,7 +504,7 @@ Expressao* expressao_compilar(const char* texto, char* erro, size_t erro_tam)
 
     pular_espacos(&ps);
     if (*ps.p == '\0') {
-        definir_erro(&ps, "digite uma funcao, por exemplo: sen(x)");
+        definir_erro(&ps, "digite uma funcao, por exemplo: 2x+1");
         return NULL;
     }
 
